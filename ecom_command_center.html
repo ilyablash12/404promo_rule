@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Командный пульт · Акции</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;600;800&family=Golos+Text:wght@400;500;600;700&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#080a0f; --s1:#0f1117; --s2:#161921; --s3:#1d2029;
+  --border:#252830; --text:#e8ecf7; --muted:#5a6080; --dim:#8890b0;
+  --go:#00e87a;     --go-bg:#001508;    --go-bd:#003d1c;
+  --watch:#f5c842;  --watch-bg:#1a1500; --watch-bd:#3d3300;
+  --part:#ff8c42;   --part-bg:#180d00;  --part-bd:#3d2000;
+  --danger:#ff3c3c; --danger-bg:#1a0000;--danger-bd:#5a0000;
+  --stop:#b06aff;   --stop-bg:#120820;  --stop-bd:#3a1a6e;
+  --apple:#5b9fff;  --apple-dim:#0d1e3a;
+}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;display:flex;flex-direction:column;min-height:100vh;}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:var(--s1);border-bottom:1px solid var(--border);}
+.brand{font-family:'Martian Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.clock{font-family:'Martian Mono',monospace;font-size:22px;font-weight:800;letter-spacing:3px;line-height:1;text-align:right;}
+.clock-date{font-family:'Martian Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;text-align:right;}
+
+.cmd-wrap{padding:18px 22px 14px;background:var(--s1);border-bottom:2px solid var(--border);}
+.sec-label{font-family:'Martian Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;}
+.cmd-box{border-radius:12px;padding:18px 22px;transition:background .35s,border-color .35s;position:relative;overflow:hidden;}
+.cmd-box::after{content:'';position:absolute;top:-40%;left:-20%;width:60%;height:200%;background:rgba(255,255,255,.025);transform:rotate(15deg);pointer-events:none;}
+
+.s-idle   {background:var(--s2);        border:2px dashed var(--border);}
+.s-go     {background:var(--go-bg);     border:2px solid var(--go-bd);}
+.s-watch  {background:var(--watch-bg);  border:2px solid var(--watch-bd);}
+.s-part   {background:var(--part-bg);   border:2px solid var(--part-bd);}
+.s-danger {background:var(--danger-bg); border:2px solid var(--danger-bd);}
+.s-stop   {background:var(--stop-bg);   border:2px solid var(--stop-bd);}
+.s-done   {background:var(--s2);        border:2px solid var(--border);}
+
+.cmd-hl{font-family:'Martian Mono',monospace;font-size:15px;font-weight:800;line-height:1.35;margin-bottom:7px;}
+.s-idle   .cmd-hl{color:var(--muted);}
+.s-go     .cmd-hl{color:var(--go);}
+.s-watch  .cmd-hl{color:var(--watch);}
+.s-part   .cmd-hl{color:var(--part);}
+.s-danger .cmd-hl{color:var(--danger);}
+.s-stop   .cmd-hl{color:var(--stop);}
+.s-done   .cmd-hl{color:var(--muted);}
+
+.cmd-why{font-size:13px;color:var(--dim);line-height:1.6;}
+.cmd-steps{display:flex;flex-direction:column;gap:7px;margin-top:12px;}
+.cmd-step{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:#c0c8e0;line-height:1.4;}
+.sn{min-width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Martian Mono',monospace;font-size:9px;font-weight:800;flex-shrink:0;margin-top:1px;}
+.n-go    {background:var(--go);    color:#000;}
+.n-watch {background:var(--watch); color:#000;}
+.n-part  {background:var(--part);  color:#000;}
+.n-danger{background:var(--danger);color:#fff;}
+.n-stop  {background:var(--stop);  color:#fff;}
+.n-apple {background:var(--apple); color:#000;}
+.n-gray  {background:var(--s3);    color:var(--dim);border:1px solid var(--border);}
+.apple-tag{display:inline-block;background:var(--apple-dim);color:var(--apple);font-size:10px;font-weight:700;padding:1px 7px;border-radius:99px;margin-left:3px;}
+
+.tl-wrap{padding:12px 22px 6px;background:var(--s1);border-bottom:1px solid var(--border);}
+.tl-track{display:flex;gap:3px;margin-bottom:5px;position:relative;}
+.tl-seg{flex:1;height:8px;border-radius:4px;background:var(--s3);position:relative;}
+.tl-open   {background:linear-gradient(90deg,#005a2e,#003d1c);}
+.tl-caution{background:linear-gradient(90deg,#3d3300,#2a2200);}
+.tl-closed {background:var(--s3);opacity:.3;}
+.tl-ptr{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-family:'Martian Mono',monospace;font-size:9px;color:var(--watch);white-space:nowrap;}
+.tl-ptr::after{content:'▼';display:block;text-align:center;font-size:8px;margin-top:1px;}
+.tl-labels{display:flex;justify-content:space-between;font-family:'Martian Mono',monospace;font-size:9px;color:var(--muted);}
+
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);}
+.met{background:var(--s1);padding:12px 14px 14px;text-align:center;}
+.met-val{font-family:'Martian Mono',monospace;font-size:18px;font-weight:800;color:var(--text);line-height:1;margin-bottom:3px;}
+.met-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.met-sub{font-size:10px;color:var(--dim);margin-top:3px;}
+.bar-wrap{height:4px;background:var(--border);border-radius:99px;margin-top:8px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:99px;transition:width .5s ease,background .5s;}
+
+.inputs-wrap{flex:1;padding:18px 22px 24px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ig{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;transition:border-color .2s;}
+.ig:focus-within{border-color:rgba(255,255,255,.18);}
+.ig label{display:block;font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;}
+.ig input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-family:'Martian Mono',monospace;font-size:18px;font-weight:800;}
+.ig input::placeholder{color:var(--s3);}
+.ig .hint{font-size:10px;color:var(--muted);margin-top:4px;}
+.wide{grid-column:1/-1;}
+.go-btn{background:var(--text);color:#060810;border:none;border-radius:10px;font-family:'Martian Mono',monospace;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:15px;cursor:pointer;transition:opacity .15s,transform .1s;}
+.go-btn:hover{opacity:.88;}
+.go-btn:active{transform:scale(.98);}
+
+@media(max-width:560px){
+  .metrics{grid-template-columns:1fr 1fr;}
+  .metrics .met:last-child{grid-column:1/-1;}
+  .igrid{grid-template-columns:1fr;}
+  .cmd-hl{font-size:13px;}
+  .clock{font-size:17px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Пульт акций · Еком</div>
+  <div>
+    <div class="clock" id="js-clock">00:00:00</div>
+    <div class="clock-date" id="js-date">—</div>
+  </div>
+</div>
+
+<div class="cmd-wrap">
+  <div class="sec-label">▶ Команда прямо сейчас</div>
+  <div class="cmd-box s-idle" id="js-box">
+    <div class="cmd-hl" id="js-hl">Введи данные ниже →</div>
+    <div class="cmd-why" id="js-why">Заполни поля и нажми «Рассчитать»</div>
+    <div class="cmd-steps" id="js-steps"></div>
+  </div>
+</div>
+
+<div class="tl-wrap">
+  <div class="tl-track" id="js-tl"></div>
+  <div class="tl-labels">
+    <span>08:00</span><span>09:00</span><span>10:00</span><span>11:00</span>
+    <span>12:00</span><span>13:00</span><span>14:00</span><span>15:00</span>
+    <span>16:00</span><span>17:00</span><span>18:00</span><span>19:00</span><span>20:00</span>
+  </div>
+</div>
+
+<div class="metrics">
+  <div class="met">
+    <div class="met-val" id="m-daily">—</div>
+    <div class="met-lbl">Дневной лимит</div>
+    <div class="met-sub">закупка, млн ₽</div>
+    <div class="bar-wrap"><div class="bar-fill" id="b-daily" style="width:0;background:var(--go)"></div></div>
+  </div>
+  <div class="met">
+    <div class="met-val" id="m-used">—</div>
+    <div class="met-lbl">Потрачено сегодня</div>
+    <div class="met-sub" id="m-used-pct">% от лимита</div>
+    <div class="bar-wrap"><div class="bar-fill" id="b-used" style="width:0;background:var(--go)"></div></div>
+  </div>
+  <div class="met">
+    <div class="met-val" id="m-free">—</div>
+    <div class="met-lbl">Остаток цикла</div>
+    <div class="met-sub">свободно, млн ₽</div>
+    <div class="bar-wrap"><div class="bar-fill" id="b-free" style="width:0;background:var(--apple)"></div></div>
+  </div>
+</div>
+
+<div class="inputs-wrap">
+  <div class="sec-label">Данные для расчёта</div>
+  <div class="igrid">
+    <div class="ig">
+      <label>Лимит цикла, млн ₽</label>
+      <input type="number" id="i-limit" value="13" step="0.1" min="0">
+      <div class="hint">13 млн / 10 дней — стандарт</div>
+    </div>
+    <div class="ig">
+      <label>Потрачено за весь цикл, млн ₽</label>
+      <input type="number" id="i-spent-cycle" value="5.9" step="0.1" min="0">
+      <div class="hint">Смотри на платформе поставщика</div>
+    </div>
+    <div class="ig">
+      <label>Потрачено сегодня, млн ₽</label>
+      <input type="number" id="i-spent-today" value="0" step="0.05" min="0">
+      <div class="hint">Закупка за текущий день</div>
+    </div>
+    <div class="ig">
+      <label>Дней осталось в цикле</label>
+      <input type="number" id="i-days-left" value="9" step="1" min="1" max="10">
+      <div class="hint">Включая сегодня</div>
+    </div>
+    <div class="ig wide">
+      <label>Заказов за последние 30 минут</label>
+      <input type="number" id="i-rate" value="0" step="1" min="0">
+      <div class="hint">1 заказ ≈ 110 000 ₽ выручки / 77 000 ₽ закупки</div>
+    </div>
+  </div>
+  <button class="go-btn" onclick="calculate()">⟳ Рассчитать — что делать прямо сейчас</button>
+</div>
+
+<script>
+const DAYS   = ['вс','пн','вт','ср','чт','пт','сб'];
+const MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+function pad(n){return String(n).padStart(2,'0');}
+
+function tickClock(){
+  const n = new Date();
+  document.getElementById('js-clock').textContent = `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+  document.getElementById('js-date').textContent  = `${DAYS[n.getDay()]}, ${n.getDate()} ${MONTHS[n.getMonth()]} ${n.getFullYear()}`;
+  renderTimeline(n);
+}
+setInterval(tickClock,1000);
+tickClock();
+
+function renderTimeline(now){
+  const track = document.getElementById('js-tl');
+  const SEGS=12, START=8;
+  const hf = now.getHours()+now.getMinutes()/60;
+  if(!track.children.length){
+    for(let i=0;i<SEGS;i++){const s=document.createElement('div');s.className='tl-seg';track.appendChild(s);}
+  }
+  const segs=track.children;
+  for(let i=0;i<SEGS;i++){
+    const h=START+i;
+    const old=segs[i].querySelector('.tl-ptr');
+    if(old)old.remove();
+    if(h>=9&&h<14)       segs[i].className='tl-seg tl-open';
+    else if(h>=14&&h<15) segs[i].className='tl-seg tl-caution';
+    else                  segs[i].className='tl-seg tl-closed';
+    if(hf>=h&&hf<h+1){
+      const ptr=document.createElement('div');
+      ptr.className='tl-ptr';
+      ptr.textContent=`${pad(now.getHours())}:${pad(now.getMinutes())}`;
+      segs[i].appendChild(ptr);
+    }
+  }
+}
+
+function fmt(n){return n.toFixed(2).replace('.',',');}
+function setBar(id,pct,color){
+  const el=document.getElementById(id);
+  el.style.width=Math.min(100,Math.max(0,pct))+'%';
+  el.style.background=color;
+}
+
+function renderCmd(state,headline,why,steps){
+  const box=document.getElementById('js-box');
+  box.className='cmd-box '+state;
+  document.getElementById('js-hl').textContent=headline;
+  document.getElementById('js-why').textContent=why;
+  const el=document.getElementById('js-steps');
+  el.innerHTML='';
+  steps.forEach(s=>{
+    const d=document.createElement('div');
+    d.className='cmd-step';
+    d.innerHTML=`<div class="sn ${s.cls}"></div><div class="step-txt">${s.txt}</div>`;
+    el.appendChild(d);
+  });
+}
+
+function calculate(){
+  const limit      = parseFloat(document.getElementById('i-limit').value)       || 13;
+  const spentCycle = parseFloat(document.getElementById('i-spent-cycle').value)  || 0;
+  const spentToday = parseFloat(document.getElementById('i-spent-today').value)  || 0;
+  const daysLeft   = Math.max(1,parseInt(document.getElementById('i-days-left').value)||1);
+  const rate30     = Math.max(0,parseInt(document.getElementById('i-rate').value)||0);
+
+  const now  = new Date();
+  const hour = now.getHours()+now.getMinutes()/60;
+
+  const freeCycle  = Math.max(0, limit - spentCycle);
+  const dailyLimit = freeCycle / daysLeft;
+  const usedPct    = dailyLimit>0 ? (spentToday/dailyLimit)*100 : 100;
+  const freeToday  = Math.max(0, dailyLimit - spentToday);
+
+  // Оценка хвоста при выходе прямо сейчас
+  const tailHoursToday = Math.max(0, Math.min(hour+6, 15) - hour); // часов хвоста ДО 15:00
+  const tailBudget     = rate30 * 2 * tailHoursToday * 0.077;      // млн закупки (rate/h * h * 77к)
+
+  // Метрики
+  document.getElementById('m-daily').textContent = fmt(dailyLimit);
+  document.getElementById('m-used').textContent  = fmt(spentToday);
+  document.getElementById('m-used-pct').textContent = `${Math.round(usedPct)}% от лимита`;
+  document.getElementById('m-free').textContent  = fmt(freeCycle - spentToday);
+  const usedColor = usedPct<50?'var(--go)':usedPct<70?'var(--watch)':'var(--danger)';
+  setBar('b-daily',(dailyLimit/(limit/10))*100,'var(--apple)');
+  setBar('b-used', usedPct, usedColor);
+  setBar('b-free', (Math.max(0,freeCycle-spentToday)/limit)*100,'var(--apple)');
+
+  const hhmm = `${pad(Math.floor(hour))}:${pad(Math.round((hour%1)*60))}`;
+
+  // ══════════════════════════════════════════
+  // ДЕРЕВО РЕШЕНИЙ
+  // ══════════════════════════════════════════
+
+  // 1. Лимит цикла полностью исчерпан
+  if(freeCycle <= 0){
+    return renderCmd('s-danger',
+      '⛔ СТОП — ЛИМИТ ЦИКЛА ИСЧЕРПАН',
+      `Потрачено ${fmt(spentCycle)} из ${fmt(limit)} млн. Свободного бюджета нет. Каждый новый заказ — закупка без оплаты.`,
+      [
+        {cls:'n-danger',txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций с ненулевой скидкой'},
+        {cls:'n-danger',txt:'<strong>Шаг 2.</strong> Выйди из Apple с ненулевой скидкой'},
+        {cls:'n-danger',txt:'<strong>Шаг 3.</strong> Выйди из всех акций на 0% — полная остановка'},
+        {cls:'n-gray',  txt:'Следующий вход — только после пополнения лимита поставщиком'},
+      ]);
+  }
+
+  // 2. Дневной лимит исчерпан (≥ 100%)
+  if(usedPct >= 100){
+    return renderCmd('s-danger',
+      '⛔ ДНЕВНОЙ ЛИМИТ ВЫБРАН — ВЫХОДИ ИЗ ВСЕХ АКЦИЙ',
+      `Сегодня потрачено ${fmt(spentToday)} из ${fmt(dailyLimit)} млн (${Math.round(usedPct)}%). Лимит исчерпан на сегодня.`,
+      [
+        {cls:'n-danger',txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций с ненулевой скидкой'},
+        {cls:'n-danger',txt:'<strong>Шаг 2.</strong> Выйди из Apple с ненулевой скидкой'},
+        {cls:'n-danger',txt:'<strong>Шаг 3.</strong> Выйди из всего на 0%'},
+        {cls:'n-gray',  txt:`Следующий вход — завтра. Лимит: ${fmt(dailyLimit)} млн`},
+      ]);
+  }
+
+  // 3. Красная зона — 70–99% + с учётом хвоста уйдём за лимит
+  if(usedPct >= 70){
+    const tailNote = tailBudget > 0.03
+      ? `При темпе ${rate30} зак./30мин хвост выхода добавит ещё ~${fmt(tailBudget)} млн закупки.`
+      : 'Темп низкий — хвост минимальный, но лимит уже критически близко.';
+    return renderCmd('s-danger',
+      '🔴 ВЫХОДИ ИЗ АКЦИЙ ПРЯМО СЕЙЧАС',
+      `Использовано ${Math.round(usedPct)}% дневного лимита (${fmt(spentToday)} из ${fmt(dailyLimit)} млн). ${tailNote}`,
+      [
+        {cls:'n-danger',txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций с ненулевой скидкой'},
+        {cls:'n-danger',txt:'<strong>Шаг 2.</strong> Выйди из Apple с ненулевой скидкой'},
+        {cls:'n-gray',  txt:'<strong>Шаг 3.</strong> Акции на 0% — можно оставить, они дают минимум'},
+        {cls:'n-gray',  txt:'Выход занимает до 6 часов — хвост продолжит давать заказы'},
+      ]);
+  }
+
+  // 4а. Частичный выход — подсостояние 1: умеренный перегрев (50–59%, темп ≥ 5)
+  //     Оставь только Apple (любая ставка), выйди из всего остального с ненулевой скидкой
+  if(usedPct >= 50 && usedPct < 60 && rate30 >= 5){
+    return renderCmd('s-part',
+      '🟠 ЧАСТИЧНО ВЫХОДИ — ОСТАВЬ ТОЛЬКО APPLE',
+      `Использовано ${Math.round(usedPct)}% лимита, темп ${rate30} зак./30мин. Хвост выхода добавит ~${fmt(tailBudget)} млн. Сокращаем поток, Apple пока держим.`,
+      [
+        {cls:'n-part',  txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций с ненулевой скидкой'},
+        {cls:'n-apple', txt:'<strong>Шаг 2.</strong> Apple 0–1% — <span class="apple-tag">оставь</span>'},
+        {cls:'n-watch', txt:`<strong>Шаг 3.</strong> Следи каждые 15 мин. При ${fmt(dailyLimit*0.65)} млн — переходи к следующему шагу`},
+        {cls:'n-gray',  txt:`Остаток сегодня: ~${fmt(freeToday)} млн`},
+      ]);
+  }
+
+  // 4б. Частичный выход — подсостояние 2: сильный перегрев (60–69%, любой темп / 50–69%, темп ≥ 8)
+  //     Оставь только 0% (все товары), выйди из всего с ненулевой скидкой
+  if((usedPct >= 60 && usedPct < 70) || (usedPct >= 50 && usedPct < 70 && rate30 >= 8)){
+    return renderCmd('s-part',
+      '🟠 ЧАСТИЧНО ВЫХОДИ — ОСТАВЬ ТОЛЬКО 0%',
+      `Использовано ${Math.round(usedPct)}% лимита${rate30 >= 8 ? `, темп критический: ${rate30} зак./30мин` : ''}. Хвост добавит ~${fmt(tailBudget)} млн. Убираем все скидки — оставляем только нулевые ставки.`,
+      [
+        {cls:'n-part',  txt:'<strong>Шаг 1.</strong> Выйди из всех акций с ненулевой скидкой — и Apple, и остальные'},
+        {cls:'n-watch', txt:'<strong>Шаг 2.</strong> Акции на <strong>0%</strong> — <span class="apple-tag" style="background:#1e2a1e;color:#00e87a">оставь</span> все'},
+        {cls:'n-watch', txt:`<strong>Шаг 3.</strong> Следи каждые 10 мин. При ${fmt(dailyLimit*0.70)} млн — выходи полностью`},
+        {cls:'n-gray',  txt:`Остаток сегодня: ~${fmt(freeToday)} млн`},
+      ]);
+  }
+
+  // 4в. Частичный выход — подсостояние 3: предкритический (50–69%, темп ≥ 5, и хвост почти съедает остаток)
+  //     Оставь только Apple 0% — самый безопасный вариант
+  if(usedPct >= 50 && usedPct < 70 && rate30 >= 5 && tailBudget >= freeToday * 0.5){
+    return renderCmd('s-part',
+      '🟠 ЧАСТИЧНО ВЫХОДИ — ОСТАВЬ ТОЛЬКО APPLE 0%',
+      `Использовано ${Math.round(usedPct)}% лимита, хвост выхода (~${fmt(tailBudget)} млн) покрывает больше половины остатка (${fmt(freeToday)} млн). Максимальное сокращение риска.`,
+      [
+        {cls:'n-part',  txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций (любая ставка)'},
+        {cls:'n-part',  txt:'<strong>Шаг 2.</strong> Выйди из Apple с ненулевой скидкой'},
+        {cls:'n-apple', txt:'<strong>Шаг 3.</strong> Apple 0% — <span class="apple-tag">оставь</span> только её'},
+        {cls:'n-watch', txt:`<strong>Шаг 4.</strong> При ${fmt(dailyLimit*0.70)} млн потраченных — выходи полностью`},
+        {cls:'n-gray',  txt:`Остаток сегодня: ~${fmt(freeToday)} млн`},
+      ]);
+  }
+
+  // 5. Жёлтая зона — 50–69%, темп умеренный
+  if(usedPct >= 50){
+    return renderCmd('s-watch',
+      '🟡 НАБЛЮДЕНИЕ — АКЦИИ РАБОТАЮТ, СЛЕДИ ЗА ТЕМПОМ',
+      `Использовано ${Math.round(usedPct)}% дневного лимита (${fmt(spentToday)} из ${fmt(dailyLimit)} млн). Пока в норме, но близко к порогу.`,
+      [
+        {cls:'n-watch',txt:'Акции оставь — продолжают работать'},
+        {cls:'n-watch',txt:'Проверяй заказы каждые 15 минут'},
+        {cls:'n-watch',txt:`При ${fmt(dailyLimit*0.70)} млн потраченных — инициируй выход`},
+        {cls:'n-gray', txt:`Остаток сегодня: ~${fmt(freeToday)} млн`},
+      ]);
+  }
+
+  // ── СТОП-состояния: входить не нужно ──
+
+  // 6. СТОП — после 15:00 и уже потрачено нормально (≥ 30%)
+  if(hour >= 15 && usedPct >= 30){
+    return renderCmd('s-stop',
+      '🚫 НЕ ВХОДИ — ДЕНЬ ЗАКРЫТ ДЛЯ АКЦИЙ',
+      `Уже ${hhmm} — заказы после 15:00 идут на завтра. Сегодня уже потрачено ${Math.round(usedPct)}% лимита (${fmt(spentToday)} млн). Вход сейчас съест завтрашний бюджет наперёд.`,
+      [
+        {cls:'n-stop',txt:'Не входи — заказы пойдут на завтра за счёт завтрашнего лимита'},
+        {cls:'n-stop',txt:`Завтрашний лимит: ${fmt(dailyLimit)} млн — не трать его сегодня`},
+        {cls:'n-gray',txt:'Если акции уже работают — реши: оставить для завтра или выйти сейчас'},
+      ]);
+  }
+
+  // 7. СТОП — цикловой бюджет израсходован непропорционально (горели бюджеты)
+  // Проверяем: потрачено за цикл больше чем должны были к этому дню
+  const daysElapsed  = 10 - daysLeft + 1; // сколько дней уже прошло (включая сегодня)
+  const idealSpentByNow = (limit / 10) * (daysElapsed - 1); // идеальный расход к началу сегодня
+  const overspentCycle  = spentCycle - spentToday - idealSpentByNow; // перерасход предыдущих дней
+  if(overspentCycle > 0.5 && usedPct < 30 && dailyLimit < (limit/10)*0.75){
+    return renderCmd('s-stop',
+      '🚫 НЕ ВХОДИ — ПРЕДЫДУЩИЕ ДНИ ПЕРЕЖГЛИ БЮДЖЕТ',
+      `Предыдущие дни потратили на ${fmt(overspentCycle)} млн больше нормы. Из-за этого твой дневной лимит упал до ${fmt(dailyLimit)} млн (норма ${fmt(limit/10)} млн). Входить в акцию — значит рисковать снова выбиться из ритма.`,
+      [
+        {cls:'n-stop',txt:'Не входи в акцию сегодня — дай циклу прийти в баланс'},
+        {cls:'n-stop',txt:`Лимит урезан: ${fmt(dailyLimit)} млн вместо ${fmt(limit/10)} млн из-за перерасхода`},
+        {cls:'n-gray',txt:'Органические продажи сегодня — нормально. Не усугубляй.'},
+        {cls:'n-gray',txt:`Оставшийся цикловой бюджет: ${fmt(freeCycle)} млн на ${daysLeft} дн.`},
+      ]);
+  }
+
+  // 8. СТОП — высокий органический темп, без акции и так хорошо
+  if(rate30 >= 6 && usedPct >= 20){
+    return renderCmd('s-stop',
+      '🚫 НЕ ВХОДИ — ЗАКАЗОВ И ТАК ДОСТАТОЧНО',
+      `За последние 30 минут упало ${rate30} заказов без новых акций. При таком темпе дневной лимит ${fmt(dailyLimit)} млн будет выбран органически — акция только ускорит перебор.`,
+      [
+        {cls:'n-stop',  txt:'Акции не нужны — органический спрос уже работает'},
+        {cls:'n-watch', txt:`Следи: при ${fmt(dailyLimit*0.70)} млн потраченных — выходи из текущих акций`},
+        {cls:'n-gray',  txt:'Сохрани бюджет — органические заказы выгоднее промо-зависимых'},
+      ]);
+  }
+
+  // 9. СТОП — очень маленький остаток на сегодня (< 3 заказов)
+  if(freeToday < 0.23){
+    return renderCmd('s-stop',
+      '🚫 НЕ ВХОДИ — ОСТАТОК ЛИМИТА СЛИШКОМ МАЛ',
+      `Свободный лимит на сегодня — ${fmt(freeToday)} млн (≈ ${Math.floor(freeToday/0.077)} заказа). Акция не окупит риск: даже 1–2 заказа закроют весь остаток.`,
+      [
+        {cls:'n-stop',txt:'Не входи — остаток слишком мал для контролируемой работы'},
+        {cls:'n-gray',txt:`Завтра лимит: ${fmt(dailyLimit)} млн — тогда и работай`},
+      ]);
+  }
+
+  // 10. Зелёная зона до 15:00 — входи
+  if(hour < 15){
+    const timeNote = hour >= 13.5
+      ? `⚠️ Сейчас ${hhmm} — до 15:00 меньше ${Math.round((15-hour)*60)} мин. Если войдёшь — хвост частично уйдёт на завтра.`
+      : `До 15:00 ещё ${Math.floor(15-hour)}ч ${Math.round((15-hour)%1*60)}мин — хорошее время.`;
+    return renderCmd('s-go',
+      '✅ МОЖНО ВХОДИТЬ В АКЦИЮ',
+      `Потрачено ${Math.round(usedPct)}% дневного лимита (${fmt(spentToday)} из ${fmt(dailyLimit)} млн). Запас есть. ${timeNote}`,
+      [
+        {cls:'n-go',  txt:'Входи с <strong>0%</strong> на всё (или <strong>0–1%</strong> на Apple)'},
+        {cls:'n-go',  txt:`Порог выхода: ${fmt(dailyLimit*0.70)} млн потрачено сегодня — следи каждые 15–30 мин`},
+        {cls:'n-gray',txt:`Остаток сегодня: ~${fmt(freeToday)} млн закупки = ~${fmt(freeToday/0.70)} млн выручки`},
+      ]);
+  }
+
+  // 11. После 15:00, потрачено мало (< 30%) — можно войти, но заказы на завтра
+  if(hour >= 15 && usedPct < 30){
+    return renderCmd('s-watch',
+      '🟡 МОЖНО ВОЙТИ — НО ЗАКАЗЫ ПОЙДУТ НА ЗАВТРА',
+      `Сегодня потрачено мало (${Math.round(usedPct)}%). Если войти сейчас — все заказы зачтутся в завтрашний лимит (${fmt(dailyLimit)} млн). Реши осознанно.`,
+      [
+        {cls:'n-watch',txt:'Войти можно — но все заказы будут <strong>завтрашними</strong>'},
+        {cls:'n-watch',txt:'Убедись, что завтрашний лимит не нужен для другого'},
+        {cls:'n-apple',txt:'Если входишь — только <span class="apple-tag">Apple</span> 0–1% или всё 0%'},
+        {cls:'n-gray', txt:`Завтрашний лимит: ${fmt(dailyLimit)} млн. Не превысить.`},
+      ]);
+  }
+
+  renderCmd('s-idle','Данные введены, нажми ещё раз','«Рассчитать»',[]);
+}
+</script>
+</body>
+</html>
