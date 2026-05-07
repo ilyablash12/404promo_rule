@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,458 +7,755 @@
 <title>Командный пульт · Акции</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;600;800&family=Golos+Text:wght@400;500;600;700&display=swap');
-
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#080a0f; --s1:#0f1117; --s2:#161921; --s3:#1d2029;
-  --border:#252830; --text:#e8ecf7; --muted:#5a6080; --dim:#8890b0;
-  --go:#00e87a;     --go-bg:#001508;    --go-bd:#003d1c;
-  --watch:#f5c842;  --watch-bg:#1a1500; --watch-bd:#3d3300;
-  --part:#ff8c42;   --part-bg:#180d00;  --part-bd:#3d2000;
-  --danger:#ff3c3c; --danger-bg:#1a0000;--danger-bd:#5a0000;
-  --stop:#b06aff;   --stop-bg:#120820;  --stop-bd:#3a1a6e;
-  --apple:#5b9fff;  --apple-dim:#0d1e3a;
+  --bg:#080a0f;--s1:#0f1117;--s2:#161921;--s3:#1d2029;
+  --border:#252830;--text:#e8ecf7;--muted:#5a6080;--dim:#8890b0;
+  --go:#00e87a;--go-bg:#001508;--go-bd:#003d1c;
+  --watch:#f5c842;--watch-bg:#1a1500;--watch-bd:#3d3300;
+  --part:#ff8c42;--part-bg:#180d00;--part-bd:#3d2000;
+  --danger:#ff3c3c;--danger-bg:#1a0000;--danger-bd:#5a0000;
+  --stop:#b06aff;--stop-bg:#120820;--stop-bd:#3a1a6e;
+  --apple:#5b9fff;--apple-dim:#0d1e3a;
+  --boost:#ff6eb4;--boost-bg:#1a0014;--boost-bd:#4a0038;
+  --margin:#c8ff6e;--margin-bg:#0d1a00;--margin-bd:#2a3d00;
+  --left-w:280px;
 }
-html,body{height:100%;}
-body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;display:flex;flex-direction:column;min-height:100vh;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;display:flex;height:100vh;}
 
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:var(--s1);border-bottom:1px solid var(--border);}
-.brand{font-family:'Martian Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
-.clock{font-family:'Martian Mono',monospace;font-size:22px;font-weight:800;letter-spacing:3px;line-height:1;text-align:right;}
-.clock-date{font-family:'Martian Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;text-align:right;}
+/* ═══ LEFT PANEL ═══ */
+.left{
+  width:var(--left-w);
+  min-width:var(--left-w);
+  max-width:var(--left-w);
+  background:var(--s1);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  overflow:hidden;
+}
+.left-top{
+  padding:14px 16px 12px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.left-top-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+.brand{font-family:'Martian Mono',monospace;font-size:9px;font-weight:600;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.settings-btn{background:var(--s2);color:var(--muted);border:1px solid var(--border);border-radius:6px;font-family:'Martian Mono',monospace;font-size:9px;font-weight:600;letter-spacing:1px;padding:5px 10px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.settings-btn:hover{color:var(--text);border-color:rgba(255,255,255,.2);}
 
-.cmd-wrap{padding:18px 22px 14px;background:var(--s1);border-bottom:2px solid var(--border);}
-.sec-label{font-family:'Martian Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;}
-.cmd-box{border-radius:12px;padding:18px 22px;transition:background .35s,border-color .35s;position:relative;overflow:hidden;}
-.cmd-box::after{content:'';position:absolute;top:-40%;left:-20%;width:60%;height:200%;background:rgba(255,255,255,.025);transform:rotate(15deg);pointer-events:none;}
 
-.s-idle   {background:var(--s2);        border:2px dashed var(--border);}
-.s-go     {background:var(--go-bg);     border:2px solid var(--go-bd);}
-.s-watch  {background:var(--watch-bg);  border:2px solid var(--watch-bd);}
-.s-part   {background:var(--part-bg);   border:2px solid var(--part-bd);}
-.s-danger {background:var(--danger-bg); border:2px solid var(--danger-bd);}
-.s-stop   {background:var(--stop-bg);   border:2px solid var(--stop-bd);}
-.s-done   {background:var(--s2);        border:2px solid var(--border);}
+/* Inputs scroll area */
+.left-inputs{
+  flex:1;
+  overflow-y:auto;
+  padding:14px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.left-inputs::-webkit-scrollbar{width:3px;}
+.left-inputs::-webkit-scrollbar-track{background:transparent;}
+.left-inputs::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
 
-.cmd-hl{font-family:'Martian Mono',monospace;font-size:15px;font-weight:800;line-height:1.35;margin-bottom:7px;}
-.s-idle   .cmd-hl{color:var(--muted);}
-.s-go     .cmd-hl{color:var(--go);}
-.s-watch  .cmd-hl{color:var(--watch);}
-.s-part   .cmd-hl{color:var(--part);}
-.s-danger .cmd-hl{color:var(--danger);}
-.s-stop   .cmd-hl{color:var(--stop);}
-.s-done   .cmd-hl{color:var(--muted);}
+.sec-label{font-family:'Martian Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:2px;}
+.ig{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;transition:border-color .2s;}
+.ig:focus-within{border-color:rgba(255,255,255,.18);}
+.ig label{display:block;font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.ig input,.ig select{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-family:'Martian Mono',monospace;font-size:15px;font-weight:800;}
+.ig input::placeholder{color:var(--s3);}
+.ig .hint{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.3;}
+.divider-line{height:1px;background:var(--border);flex-shrink:0;}
 
-.cmd-why{font-size:13px;color:var(--dim);line-height:1.6;}
-.cmd-steps{display:flex;flex-direction:column;gap:7px;margin-top:12px;}
-.cmd-step{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:#c0c8e0;line-height:1.4;}
-.sn{min-width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Martian Mono',monospace;font-size:9px;font-weight:800;flex-shrink:0;margin-top:1px;}
-.n-go    {background:var(--go);    color:#000;}
-.n-watch {background:var(--watch); color:#000;}
-.n-part  {background:var(--part);  color:#000;}
-.n-danger{background:var(--danger);color:#fff;}
-.n-stop  {background:var(--stop);  color:#fff;}
-.n-apple {background:var(--apple); color:#000;}
-.n-gray  {background:var(--s3);    color:var(--dim);border:1px solid var(--border);}
-.apple-tag{display:inline-block;background:var(--apple-dim);color:var(--apple);font-size:10px;font-weight:700;padding:1px 7px;border-radius:99px;margin-left:3px;}
+.calc-btn{
+  background:var(--text);color:#060810;border:none;border-radius:8px;
+  font-family:'Martian Mono',monospace;font-size:10px;font-weight:800;
+  letter-spacing:2px;text-transform:uppercase;padding:13px;
+  cursor:pointer;transition:opacity .15s,transform .1s;
+  flex-shrink:0;margin:0 16px 16px;
+}
+.calc-btn:hover{opacity:.88;}
+.calc-btn:active{transform:scale(.98);}
 
-.tl-wrap{padding:12px 22px 6px;background:var(--s1);border-bottom:1px solid var(--border);}
+/* ═══ RIGHT PANEL ═══ */
+.right{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* Topbar right */
+.right-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 20px;
+  background:var(--s1);
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.clock{font-family:'Martian Mono',monospace;font-size:20px;font-weight:800;letter-spacing:3px;line-height:1;}
+.clock-date{font-family:'Martian Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;}
+.period-badge-wrap{display:flex;align-items:center;gap:8px;}
+.pbadge{font-family:'Martian Mono',monospace;font-size:10px;font-weight:800;padding:4px 12px;border-radius:99px;}
+.pbadge-1{background:#001a3d;color:var(--apple);border:1px solid #003d8f;}
+.pbadge-2{background:#1a0d00;color:var(--part);border:1px solid #3d2000;}
+.pbadge-note{font-size:10px;color:var(--dim);}
+
+/* Right scroll content */
+.right-content{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+.right-content::-webkit-scrollbar{width:3px;}
+.right-content::-webkit-scrollbar-track{background:transparent;}
+.right-content::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-radius:10px;overflow:hidden;flex-shrink:0;}
+.met{background:var(--s1);padding:12px 14px 14px;text-align:center;}
+.met-val{font-family:'Martian Mono',monospace;font-size:17px;font-weight:800;color:var(--text);line-height:1;margin-bottom:3px;}
+.met-lbl{font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.met-sub{font-size:9px;color:var(--dim);margin-top:3px;}
+.bar-wrap{height:3px;background:var(--border);border-radius:99px;margin-top:8px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:99px;transition:width .5s ease,background .5s;}
+
+/* TIMELINE */
+.tl-wrap{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:12px 16px 8px;}
 .tl-track{display:flex;gap:3px;margin-bottom:5px;position:relative;}
-.tl-seg{flex:1;height:8px;border-radius:4px;background:var(--s3);position:relative;}
+.tl-seg{flex:1;height:7px;border-radius:4px;background:var(--s3);position:relative;}
 .tl-open   {background:linear-gradient(90deg,#005a2e,#003d1c);}
 .tl-caution{background:linear-gradient(90deg,#3d3300,#2a2200);}
 .tl-closed {background:var(--s3);opacity:.3;}
-.tl-ptr{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-family:'Martian Mono',monospace;font-size:9px;color:var(--watch);white-space:nowrap;}
-.tl-ptr::after{content:'▼';display:block;text-align:center;font-size:8px;margin-top:1px;}
-.tl-labels{display:flex;justify-content:space-between;font-family:'Martian Mono',monospace;font-size:9px;color:var(--muted);}
+.tl-ptr{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-family:'Martian Mono',monospace;font-size:8px;color:var(--watch);white-space:nowrap;}
+.tl-ptr::after{content:'▼';display:block;text-align:center;font-size:7px;margin-top:1px;}
+.tl-labels{display:flex;justify-content:space-between;font-family:'Martian Mono',monospace;font-size:8px;color:var(--muted);}
 
-.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);}
-.met{background:var(--s1);padding:12px 14px 14px;text-align:center;}
-.met-val{font-family:'Martian Mono',monospace;font-size:18px;font-weight:800;color:var(--text);line-height:1;margin-bottom:3px;}
-.met-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-.met-sub{font-size:10px;color:var(--dim);margin-top:3px;}
-.bar-wrap{height:4px;background:var(--border);border-radius:99px;margin-top:8px;overflow:hidden;}
-.bar-fill{height:100%;border-radius:99px;transition:width .5s ease,background .5s;}
+/* CMD BOX */
+.cmd-section-label{font-family:'Martian Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.cmd-box{border-radius:10px;padding:16px 18px;transition:background .35s,border-color .35s;position:relative;overflow:hidden;}
+.cmd-box::after{content:'';position:absolute;top:-40%;left:-20%;width:60%;height:200%;background:rgba(255,255,255,.025);transform:rotate(15deg);pointer-events:none;}
+.s-idle  {background:var(--s2);border:2px dashed var(--border);}
+.s-go    {background:var(--go-bg);border:2px solid var(--go-bd);}
+.s-watch {background:var(--watch-bg);border:2px solid var(--watch-bd);}
+.s-part  {background:var(--part-bg);border:2px solid var(--part-bd);}
+.s-danger{background:var(--danger-bg);border:2px solid var(--danger-bd);}
+.s-stop  {background:var(--stop-bg);border:2px solid var(--stop-bd);}
+.cmd-hl{font-family:'Martian Mono',monospace;font-size:14px;font-weight:800;line-height:1.3;margin-bottom:6px;}
+.s-idle  .cmd-hl{color:var(--muted);}
+.s-go    .cmd-hl{color:var(--go);}
+.s-watch .cmd-hl{color:var(--watch);}
+.s-part  .cmd-hl{color:var(--part);}
+.s-danger .cmd-hl{color:var(--danger);}
+.s-stop  .cmd-hl{color:var(--stop);}
+.cmd-why{font-size:12px;color:var(--dim);line-height:1.55;}
+.cmd-steps{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.cmd-step{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#c0c8e0;line-height:1.4;}
+.sn{min-width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Martian Mono',monospace;font-size:8px;font-weight:800;flex-shrink:0;margin-top:1px;}
+.n-go    {background:var(--go);color:#000;}
+.n-watch {background:var(--watch);color:#000;}
+.n-part  {background:var(--part);color:#000;}
+.n-danger{background:var(--danger);color:#fff;}
+.n-stop  {background:var(--stop);color:#fff;}
+.n-apple {background:var(--apple);color:#000;}
+.n-boost {background:var(--boost);color:#fff;}
+.n-margin{background:var(--margin);color:#000;}
+.n-gray  {background:var(--s3);color:var(--dim);border:1px solid var(--border);}
+.apple-tag{display:inline-block;background:var(--apple-dim);color:var(--apple);font-size:9px;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:2px;}
 
-.inputs-wrap{flex:1;padding:18px 22px 24px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;}
-.igrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.ig{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;transition:border-color .2s;}
-.ig:focus-within{border-color:rgba(255,255,255,.18);}
-.ig label{display:block;font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;}
-.ig input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-family:'Martian Mono',monospace;font-size:18px;font-weight:800;}
-.ig input::placeholder{color:var(--s3);}
-.ig .hint{font-size:10px;color:var(--muted);margin-top:4px;}
-.wide{grid-column:1/-1;}
-.go-btn{background:var(--text);color:#060810;border:none;border-radius:10px;font-family:'Martian Mono',monospace;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:15px;cursor:pointer;transition:opacity .15s,transform .1s;}
-.go-btn:hover{opacity:.88;}
-.go-btn:active{transform:scale(.98);}
+/* Secondary cmd (boost/margin) */
+.secondary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.scmd-box{border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;}
+.scmd-box::after{content:'';position:absolute;top:-40%;left:-20%;width:60%;height:200%;background:rgba(255,255,255,.02);transform:rotate(15deg);pointer-events:none;}
+.s-boost  {background:var(--boost-bg);border:1px solid var(--boost-bd);}
+.s-margin {background:var(--margin-bg);border:1px solid var(--margin-bd);}
+.s-neutral{background:var(--s2);border:1px solid var(--border);}
+.scmd-hl{font-family:'Martian Mono',monospace;font-size:11px;font-weight:800;margin-bottom:4px;}
+.s-boost  .scmd-hl{color:var(--boost);}
+.s-margin .scmd-hl{color:var(--margin);}
+.s-neutral .scmd-hl{color:var(--muted);}
+.scmd-why{font-size:11px;color:var(--dim);line-height:1.5;}
+.scmd-steps{display:flex;flex-direction:column;gap:5px;margin-top:8px;}
+.scmd-step{display:flex;align-items:flex-start;gap:7px;font-size:11px;color:#c0c8e0;line-height:1.4;}
 
-@media(max-width:560px){
-  .metrics{grid-template-columns:1fr 1fr;}
-  .metrics .met:last-child{grid-column:1/-1;}
-  .igrid{grid-template-columns:1fr;}
-  .cmd-hl{font-size:13px;}
-  .clock{font-size:17px;}
+/* SETTINGS MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:24px;width:100%;max-width:360px;}
+.modal-title{font-family:'Martian Mono',monospace;font-size:12px;font-weight:800;color:var(--text);margin-bottom:4px;letter-spacing:1px;}
+.modal-sub{font-size:11px;color:var(--muted);margin-bottom:18px;}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.modal-ig{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;}
+.modal-ig:focus-within{border-color:rgba(255,255,255,.2);}
+.modal-ig label{display:block;font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;}
+.modal-ig input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-family:'Martian Mono',monospace;font-size:17px;font-weight:800;}
+.modal-ig .hint{font-size:10px;color:var(--muted);margin-top:4px;}
+.modal-btns{display:flex;gap:8px;}
+.modal-save{flex:1;background:var(--text);color:#060810;border:none;border-radius:8px;font-family:'Martian Mono',monospace;font-size:11px;font-weight:800;letter-spacing:1px;padding:12px;cursor:pointer;transition:opacity .15s;}
+.modal-save:hover{opacity:.88;}
+.modal-cancel{background:var(--s2);color:var(--muted);border:1px solid var(--border);border-radius:8px;font-family:'Martian Mono',monospace;font-size:11px;font-weight:800;padding:12px 16px;cursor:pointer;transition:all .2s;}
+.modal-cancel:hover{color:var(--text);}
+
+@media(max-width:700px){
+  :root{--left-w:220px;}
+  .secondary-grid{grid-template-columns:1fr;}
+  .cmd-hl{font-size:12px;}
+}
+@media(max-width:500px){
+  body{flex-direction:column;overflow:auto;}
+  .left{width:100%;min-width:unset;max-width:unset;height:auto;}
+  .right{height:auto;}
+  html,body{height:auto;overflow:auto;}
 }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="brand">Пульт акций · Еком</div>
-  <div>
-    <div class="clock" id="js-clock">00:00:00</div>
-    <div class="clock-date" id="js-date">—</div>
-  </div>
-</div>
+<!-- ═══ LEFT PANEL ═══ -->
+<div class="left">
+  <div class="left-top">
+    <div class="left-top-row">
+      <div class="brand">Пульт акций</div>
+      <button class="settings-btn" onclick="openSettings()">⚙ Лимиты</button>
+    </div>
 
-<div class="cmd-wrap">
-  <div class="sec-label">▶ Команда прямо сейчас</div>
-  <div class="cmd-box s-idle" id="js-box">
-    <div class="cmd-hl" id="js-hl">Введи данные ниже →</div>
-    <div class="cmd-why" id="js-why">Заполни поля и нажми «Рассчитать»</div>
-    <div class="cmd-steps" id="js-steps"></div>
-  </div>
-</div>
 
-<div class="tl-wrap">
-  <div class="tl-track" id="js-tl"></div>
-  <div class="tl-labels">
-    <span>08:00</span><span>09:00</span><span>10:00</span><span>11:00</span>
-    <span>12:00</span><span>13:00</span><span>14:00</span><span>15:00</span>
-    <span>16:00</span><span>17:00</span><span>18:00</span><span>19:00</span><span>20:00</span>
   </div>
-</div>
 
-<div class="metrics">
-  <div class="met">
-    <div class="met-val" id="m-daily">—</div>
-    <div class="met-lbl">Дневной лимит</div>
-    <div class="met-sub">закупка, млн ₽</div>
-    <div class="bar-wrap"><div class="bar-fill" id="b-daily" style="width:0;background:var(--go)"></div></div>
-  </div>
-  <div class="met">
-    <div class="met-val" id="m-used">—</div>
-    <div class="met-lbl">Потрачено сегодня</div>
-    <div class="met-sub" id="m-used-pct">% от лимита</div>
-    <div class="bar-wrap"><div class="bar-fill" id="b-used" style="width:0;background:var(--go)"></div></div>
-  </div>
-  <div class="met">
-    <div class="met-val" id="m-free">—</div>
-    <div class="met-lbl">Остаток цикла</div>
-    <div class="met-sub">свободно, млн ₽</div>
-    <div class="bar-wrap"><div class="bar-fill" id="b-free" style="width:0;background:var(--apple)"></div></div>
-  </div>
-</div>
-
-<div class="inputs-wrap">
-  <div class="sec-label">Данные для расчёта</div>
-  <div class="igrid">
+  <div class="left-inputs">
+    <div class="sec-label">Бюджет</div>
     <div class="ig">
-      <label>Лимит цикла, млн ₽</label>
-      <input type="number" id="i-limit" value="13" step="0.1" min="0">
-      <div class="hint">13 млн / 10 дней — стандарт</div>
+      <label>Потрачено за цикл, млн ₽</label>
+      <input type="number" id="i-spent-cycle" value="5.9" step="0.1" min="0">
+      <div class="hint">Платформа поставщика</div>
     </div>
     <div class="ig">
-      <label>Потрачено за весь цикл, млн ₽</label>
-      <input type="number" id="i-spent-cycle" value="5.9" step="0.1" min="0">
-      <div class="hint">Смотри на платформе поставщика</div>
+      <label>Дата погашения долга</label>
+      <input type="date" id="i-paydate" value="2026-05-15">
+      <div class="hint">Когда отдаём деньги поставщику</div>
     </div>
     <div class="ig">
       <label>Потрачено сегодня, млн ₽</label>
       <input type="number" id="i-spent-today" value="0" step="0.05" min="0">
-      <div class="hint">Закупка за текущий день</div>
     </div>
     <div class="ig">
-      <label>Дней осталось в цикле</label>
-      <input type="number" id="i-days-left" value="9" step="1" min="1" max="10">
-      <div class="hint">Включая сегодня</div>
-    </div>
-    <div class="ig wide">
-      <label>Заказов за последние 30 минут</label>
+      <label>Заказов за 30 мин</label>
       <input type="number" id="i-rate" value="0" step="1" min="0">
-      <div class="hint">1 заказ ≈ 110 000 ₽ выручки / 77 000 ₽ закупки</div>
+      <div class="hint">1 зак ≈ 77к закупки</div>
+    </div>
+
+    <div class="divider-line"></div>
+    <div class="sec-label">Плавный вход</div>
+    <div class="ig">
+      <label>Текущая ступень</label>
+      <select id="i-step">
+        <option value="0">0 — не в акции</option>
+        <option value="1">1 — Apple 0%</option>
+        <option value="2">2 — Apple 0% + всё 0%</option>
+        <option value="3">3 — Apple 1% + всё 0%</option>
+      </select>
+    </div>
+    <div class="ig">
+      <label>Минут на ступени</label>
+      <input type="number" id="i-step-min" value="0" step="5" min="0">
+    </div>
+    <div class="ig">
+      <label>Заказов на ступени</label>
+      <input type="number" id="i-step-orders" value="0" step="1" min="0">
+      <div class="hint">С начала текущей ступени</div>
+    </div>
+
+    <div class="divider-line"></div>
+    <div class="sec-label">Буст и маржа</div>
+    <div class="ig">
+      <label>Буст сейчас, %</label>
+      <input type="number" id="i-boost" value="0" step="1" min="0" max="10">
+      <div class="hint">0 = выкл · 3–5 = активный</div>
+    </div>
+    <div class="ig">
+      <label>Мин на бусте</label>
+      <input type="number" id="i-boost-min" value="0" step="15" min="0">
+    </div>
+    <div class="ig">
+      <label>Маржа сейчас, %</label>
+      <input type="number" id="i-margin" value="4.5" step="0.5" min="0" max="10">
+      <div class="hint">Норма: 3,5–5,5%</div>
+    </div>
+    <div class="ig">
+      <label>Кабинет живёт?</label>
+      <select id="i-alive">
+        <option value="1">Да — заказы есть</option>
+        <option value="0">Нет — заказов нет</option>
+      </select>
     </div>
   </div>
-  <button class="go-btn" onclick="calculate()">⟳ Рассчитать — что делать прямо сейчас</button>
+
+  <button class="calc-btn" onclick="calculate()">⟳ Рассчитать</button>
+</div>
+
+<!-- ═══ RIGHT PANEL ═══ -->
+<div class="right">
+  <div class="right-top">
+    <div>
+      <div class="clock" id="js-clock">00:00:00</div>
+      <div class="clock-date" id="js-date">—</div>
+    </div>
+    <div class="period-badge-wrap">
+      <div class="pbadge pbadge-1" id="js-pbadge">—</div>
+      <div class="pbadge-note" id="js-pnote">Введи данные</div>
+    </div>
+  </div>
+
+  <div class="right-content">
+
+    <!-- Metrics -->
+    <div class="metrics">
+      <div class="met">
+        <div class="met-val" id="m-daily">—</div>
+        <div class="met-lbl">Дневной лимит</div>
+        <div class="met-sub">закупка, млн ₽</div>
+        <div class="bar-wrap"><div class="bar-fill" id="b-daily" style="width:0;background:var(--go)"></div></div>
+      </div>
+      <div class="met">
+        <div class="met-val" id="m-used">—</div>
+        <div class="met-lbl">Потрачено сегодня</div>
+        <div class="met-sub" id="m-used-pct">% от лимита</div>
+        <div class="bar-wrap"><div class="bar-fill" id="b-used" style="width:0;background:var(--go)"></div></div>
+      </div>
+      <div class="met">
+        <div class="met-val" id="m-free">—</div>
+        <div class="met-lbl">Остаток периода</div>
+        <div class="met-sub">свободно, млн ₽</div>
+        <div class="bar-wrap"><div class="bar-fill" id="b-free" style="width:0;background:var(--apple)"></div></div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="tl-wrap">
+      <div class="tl-track" id="js-tl"></div>
+      <div class="tl-labels">
+        <span>08</span><span>09</span><span>10</span><span>11</span>
+        <span>12</span><span>13</span><span>14</span><span>15</span>
+        <span>16</span><span>17</span><span>18</span><span>19</span><span>20</span>
+      </div>
+    </div>
+
+    <!-- Main command: Акции -->
+    <div>
+      <div class="cmd-section-label">▶ Акции</div>
+      <div class="cmd-box s-idle" id="js-box">
+        <div class="cmd-hl" id="js-hl">Введи данные и нажми «Рассчитать»</div>
+        <div class="cmd-why" id="js-why"></div>
+        <div class="cmd-steps" id="js-steps"></div>
+      </div>
+    </div>
+
+    <!-- Boost + Margin -->
+    <div class="secondary-grid">
+      <div>
+        <div class="cmd-section-label">▶ Буст</div>
+        <div class="scmd-box s-neutral" id="js-boost-box">
+          <div class="scmd-hl" id="js-boost-hl">💨 Введи данные</div>
+          <div class="scmd-why" id="js-boost-why"></div>
+          <div class="scmd-steps" id="js-boost-steps"></div>
+        </div>
+      </div>
+      <div>
+        <div class="cmd-section-label">▶ Маржинальность</div>
+        <div class="scmd-box s-neutral" id="js-margin-box">
+          <div class="scmd-hl" id="js-margin-hl">📊 Введи данные</div>
+          <div class="scmd-why" id="js-margin-why"></div>
+          <div class="scmd-steps" id="js-margin-steps"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-overlay" onclick="closeSettingsOutside(event)">
+  <div class="modal">
+    <div class="modal-title">⚙ Настройка лимитов</div>
+    <div class="modal-sub">Измени значения и нажми «Сохранить»</div>
+    <div class="modal-grid">
+      <div class="modal-ig">
+        <label>Лимит периода 1, млн ₽</label>
+        <input type="number" id="cfg-p1-limit" value="9" step="0.5" min="0">
+        <div class="hint">Первые N дней</div>
+      </div>
+      <div class="modal-ig">
+        <label>Дней в периоде 1</label>
+        <input type="number" id="cfg-p1-days" value="5" step="1" min="1">
+      </div>
+      <div class="modal-ig">
+        <label>Лимит периода 2, млн ₽</label>
+        <input type="number" id="cfg-p2-limit" value="4" step="0.5" min="0">
+        <div class="hint">Оставшиеся дни</div>
+      </div>
+      <div class="modal-ig">
+        <label>Дней в периоде 2</label>
+        <input type="number" id="cfg-p2-days" value="5" step="1" min="1">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-save" onclick="saveSettings()">✓ Сохранить</button>
+      <button class="modal-cancel" onclick="closeSettings()">Отмена</button>
+    </div>
+  </div>
 </div>
 
 <script>
-const DAYS   = ['вс','пн','вт','ср','чт','пт','сб'];
-const MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const DAYS=['вс','пн','вт','ср','чт','пт','сб'];
+const MONTHS=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 function pad(n){return String(n).padStart(2,'0');}
 
+let CFG={p1limit:9,p1days:5,p2limit:4,p2days:5};
+
+function openSettings(){
+  document.getElementById('cfg-p1-limit').value=CFG.p1limit;
+  document.getElementById('cfg-p1-days').value=CFG.p1days;
+  document.getElementById('cfg-p2-limit').value=CFG.p2limit;
+  document.getElementById('cfg-p2-days').value=CFG.p2days;
+  document.getElementById('settings-overlay').classList.add('open');
+}
+function closeSettings(){document.getElementById('settings-overlay').classList.remove('open');}
+function closeSettingsOutside(e){if(e.target===document.getElementById('settings-overlay'))closeSettings();}
+function saveSettings(){
+  CFG.p1limit=parseFloat(document.getElementById('cfg-p1-limit').value)||9;
+  CFG.p1days=parseInt(document.getElementById('cfg-p1-days').value)||5;
+  CFG.p2limit=parseFloat(document.getElementById('cfg-p2-limit').value)||4;
+  CFG.p2days=parseInt(document.getElementById('cfg-p2-days').value)||5;
+  closeSettings();
+}
+
+
+
 function tickClock(){
-  const n = new Date();
-  document.getElementById('js-clock').textContent = `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
-  document.getElementById('js-date').textContent  = `${DAYS[n.getDay()]}, ${n.getDate()} ${MONTHS[n.getMonth()]} ${n.getFullYear()}`;
+  const n=new Date();
+  document.getElementById('js-clock').textContent=`${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+  document.getElementById('js-date').textContent=`${DAYS[n.getDay()]}, ${n.getDate()} ${MONTHS[n.getMonth()]} ${n.getFullYear()}`;
   renderTimeline(n);
 }
 setInterval(tickClock,1000);
 tickClock();
 
 function renderTimeline(now){
-  const track = document.getElementById('js-tl');
-  const SEGS=12, START=8;
-  const hf = now.getHours()+now.getMinutes()/60;
-  if(!track.children.length){
-    for(let i=0;i<SEGS;i++){const s=document.createElement('div');s.className='tl-seg';track.appendChild(s);}
-  }
+  const track=document.getElementById('js-tl');
+  const SEGS=12,START=8;
+  const hf=now.getHours()+now.getMinutes()/60;
+  if(!track.children.length){for(let i=0;i<SEGS;i++){const s=document.createElement('div');s.className='tl-seg';track.appendChild(s);}}
   const segs=track.children;
   for(let i=0;i<SEGS;i++){
     const h=START+i;
-    const old=segs[i].querySelector('.tl-ptr');
-    if(old)old.remove();
-    if(h>=9&&h<14)       segs[i].className='tl-seg tl-open';
-    else if(h>=14&&h<15) segs[i].className='tl-seg tl-caution';
-    else                  segs[i].className='tl-seg tl-closed';
-    if(hf>=h&&hf<h+1){
-      const ptr=document.createElement('div');
-      ptr.className='tl-ptr';
-      ptr.textContent=`${pad(now.getHours())}:${pad(now.getMinutes())}`;
-      segs[i].appendChild(ptr);
-    }
+    const old=segs[i].querySelector('.tl-ptr');if(old)old.remove();
+    if(h>=9&&h<14)segs[i].className='tl-seg tl-open';
+    else if(h>=14&&h<15)segs[i].className='tl-seg tl-caution';
+    else segs[i].className='tl-seg tl-closed';
+    if(hf>=h&&hf<h+1){const ptr=document.createElement('div');ptr.className='tl-ptr';ptr.textContent=`${pad(now.getHours())}:${pad(now.getMinutes())}`;segs[i].appendChild(ptr);}
   }
 }
 
 function fmt(n){return n.toFixed(2).replace('.',',');}
-function setBar(id,pct,color){
-  const el=document.getElementById(id);
-  el.style.width=Math.min(100,Math.max(0,pct))+'%';
-  el.style.background=color;
-}
+function setBar(id,pct,color){const el=document.getElementById(id);el.style.width=Math.min(100,Math.max(0,pct))+'%';el.style.background=color;}
 
 function renderCmd(state,headline,why,steps){
   const box=document.getElementById('js-box');
   box.className='cmd-box '+state;
   document.getElementById('js-hl').textContent=headline;
   document.getElementById('js-why').textContent=why;
-  const el=document.getElementById('js-steps');
-  el.innerHTML='';
-  steps.forEach(s=>{
-    const d=document.createElement('div');
-    d.className='cmd-step';
-    d.innerHTML=`<div class="sn ${s.cls}"></div><div class="step-txt">${s.txt}</div>`;
-    el.appendChild(d);
-  });
+  const el=document.getElementById('js-steps');el.innerHTML='';
+  steps.forEach(s=>{const d=document.createElement('div');d.className='cmd-step';d.innerHTML=`<div class="sn ${s.cls}"></div><div class="step-txt">${s.txt}</div>`;el.appendChild(d);});
+}
+function renderSecCmd(boxId,hlId,whyId,stepsId,state,headline,why,steps){
+  document.getElementById(boxId).className='scmd-box '+state;
+  document.getElementById(hlId).textContent=headline;
+  document.getElementById(whyId).textContent=why;
+  const el=document.getElementById(stepsId);el.innerHTML='';
+  steps.forEach(s=>{const d=document.createElement('div');d.className='scmd-step';d.innerHTML=`<div class="sn ${s.cls}"></div><div class="step-txt">${s.txt}</div>`;el.appendChild(d);});
+}
+
+function getPeriodBudget(daysLeft){
+  if(daysLeft>CFG.p2days){return{period:1,totalPeriod:CFG.p1limit,daysInPeriod:CFG.p1days};}
+  else{return{period:2,totalPeriod:CFG.p2limit,daysInPeriod:CFG.p2days};}
 }
 
 function calculate(){
-  const limit      = parseFloat(document.getElementById('i-limit').value)       || 13;
-  const spentCycle = parseFloat(document.getElementById('i-spent-cycle').value)  || 0;
-  const spentToday = parseFloat(document.getElementById('i-spent-today').value)  || 0;
-  const daysLeft   = Math.max(1,parseInt(document.getElementById('i-days-left').value)||1);
-  const rate30     = Math.max(0,parseInt(document.getElementById('i-rate').value)||0);
+  const spentCycle =parseFloat(document.getElementById('i-spent-cycle').value)||0;
+  const spentToday =parseFloat(document.getElementById('i-spent-today').value)||0;
 
-  const now  = new Date();
-  const hour = now.getHours()+now.getMinutes()/60;
+  // Считаем дни из даты погашения
+  const paydateVal = document.getElementById('i-paydate').value;
+  const paydate    = paydateVal ? new Date(paydateVal) : new Date();
+  const today      = new Date(); today.setHours(0,0,0,0); paydate.setHours(0,0,0,0);
+  const totalCycleDays = CFG.p1days + CFG.p2days;           // 10 дней
+  const cycleStart = new Date(paydate);
+  cycleStart.setDate(cycleStart.getDate() - totalCycleDays + 1); // первый день цикла
+  const dayOfCycle = Math.floor((today - cycleStart) / 86400000) + 1; // какой день цикла сегодня (1-based)
+  const daysLeft   = Math.max(1, totalCycleDays - dayOfCycle + 1);    // дней осталось включая сегодня
+  const rate30     =Math.max(0,parseInt(document.getElementById('i-rate').value)||0);
+  const step       =parseInt(document.getElementById('i-step').value)||0;
+  const stepMin    =Math.max(0,parseInt(document.getElementById('i-step-min').value)||0);
+  const stepOrders =Math.max(0,parseInt(document.getElementById('i-step-orders').value)||0);
+  const boostNow   =parseFloat(document.getElementById('i-boost').value)||0;
+  const boostMin   =Math.max(0,parseInt(document.getElementById('i-boost-min').value)||0);
+  const marginNow  =parseFloat(document.getElementById('i-margin').value)||4.5;
+  const alive      =parseInt(document.getElementById('i-alive').value);
 
-  const freeCycle  = Math.max(0, limit - spentCycle);
-  const dailyLimit = freeCycle / daysLeft;
-  const usedPct    = dailyLimit>0 ? (spentToday/dailyLimit)*100 : 100;
-  const freeToday  = Math.max(0, dailyLimit - spentToday);
+  const now=new Date();
+  const hour=now.getHours()+now.getMinutes()/60;
+  const hhmm=`${pad(Math.floor(hour))}:${pad(Math.round((hour%1)*60))}`;
 
-  // Оценка хвоста при выходе прямо сейчас
-  const tailHoursToday = Math.max(0, Math.min(hour+6, 15) - hour); // часов хвоста ДО 15:00
-  const tailBudget     = rate30 * 2 * tailHoursToday * 0.077;      // млн закупки (rate/h * h * 77к)
+  const{period,totalPeriod,daysInPeriod}=getPeriodBudget(daysLeft);
+  const spentInPeriod=period===1?spentCycle:Math.max(0,spentCycle-CFG.p1limit);
+  const freePeriod=Math.max(0,totalPeriod-spentInPeriod);
+  const dailyLimit=freePeriod/daysLeft;
+  const usedPct=dailyLimit>0?(spentToday/dailyLimit)*100:100;
+  const freeToday=Math.max(0,dailyLimit-spentToday);
+  const tailHoursToday=Math.max(0,Math.min(hour+6,15)-hour);
+  const tailBudget=rate30*2*tailHoursToday*0.077;
 
-  // Метрики
-  document.getElementById('m-daily').textContent = fmt(dailyLimit);
-  document.getElementById('m-used').textContent  = fmt(spentToday);
-  document.getElementById('m-used-pct').textContent = `${Math.round(usedPct)}% от лимита`;
-  document.getElementById('m-free').textContent  = fmt(freeCycle - spentToday);
-  const usedColor = usedPct<50?'var(--go)':usedPct<70?'var(--watch)':'var(--danger)';
-  setBar('b-daily',(dailyLimit/(limit/10))*100,'var(--apple)');
-  setBar('b-used', usedPct, usedColor);
-  setBar('b-free', (Math.max(0,freeCycle-spentToday)/limit)*100,'var(--apple)');
+  const WINDOW=120,THRESH=5;
+  const windowDone=stepMin>=WINDOW;
+  const tempoLow=stepOrders<THRESH;
+  const canAdvance=windowDone&&tempoLow;
+  const tempoHot=stepOrders>=THRESH;
+  const minLeft=WINDOW-stepMin;
 
-  const hhmm = `${pad(Math.floor(hour))}:${pad(Math.round((hour%1)*60))}`;
+  // Badge
+  const pb=document.getElementById('js-pbadge');
+  pb.className=`pbadge ${period===1?'pbadge-1':'pbadge-2'}`;
+  pb.textContent=`Период ${period}`;
+  const cycleStartStr = cycleStart.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
+  const paydateStr    = paydate.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
+  document.getElementById('js-pnote').textContent=`День ${dayOfCycle} из ${totalCycleDays} (${cycleStartStr}–${paydateStr}) · ${fmt(dailyLimit)} млн/день`;
 
-  // ══════════════════════════════════════════
-  // ДЕРЕВО РЕШЕНИЙ
-  // ══════════════════════════════════════════
+  // Metrics
+  document.getElementById('m-daily').textContent=fmt(dailyLimit);
+  document.getElementById('m-used').textContent=fmt(spentToday);
+  document.getElementById('m-used-pct').textContent=`${Math.round(usedPct)}% от лимита`;
+  document.getElementById('m-free').textContent=fmt(freePeriod-spentToday);
+  const usedColor=usedPct<50?'var(--go)':usedPct<70?'var(--watch)':'var(--danger)';
+  setBar('b-daily',(dailyLimit/(totalPeriod/daysInPeriod))*100,'var(--apple)');
+  setBar('b-used',usedPct,usedColor);
+  setBar('b-free',(Math.max(0,freePeriod-spentToday)/totalPeriod)*100,'var(--apple)');
 
-  // 1. Лимит цикла полностью исчерпан
-  if(freeCycle <= 0){
-    return renderCmd('s-danger',
-      '⛔ СТОП — ЛИМИТ ЦИКЛА ИСЧЕРПАН',
-      `Потрачено ${fmt(spentCycle)} из ${fmt(limit)} млн. Свободного бюджета нет. Каждый новый заказ — закупка без оплаты.`,
-      [
-        {cls:'n-danger',txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций с ненулевой скидкой'},
-        {cls:'n-danger',txt:'<strong>Шаг 2.</strong> Выйди из Apple с ненулевой скидкой'},
-        {cls:'n-danger',txt:'<strong>Шаг 3.</strong> Выйди из всех акций на 0% — полная остановка'},
-        {cls:'n-gray',  txt:'Следующий вход — только после пополнения лимита поставщиком'},
-      ]);
+  // ── АКЦИИ ──
+  if(freePeriod<=0){
+    renderCmd('s-danger','⛔ СТОП — ЛИМИТ ПЕРИОДА ИСЧЕРПАН',
+      `Период ${period}: потрачено ${fmt(spentInPeriod)} из ${fmt(totalPeriod)} млн.`,
+      [{cls:'n-danger',txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций с ненулевой скидкой'},
+       {cls:'n-danger',txt:'<strong>Шаг 2.</strong> Выйди из Apple с ненулевой скидкой'},
+       {cls:'n-danger',txt:'<strong>Шаг 3.</strong> Выйди из всего на 0% — полная остановка'},
+       {cls:'n-gray',  txt:period===1?'Вход — только в период 2':'Вход — после пополнения лимита'}]);
+  } else if(usedPct>=100){
+    renderCmd('s-danger','⛔ ДНЕВНОЙ ЛИМИТ ВЫБРАН — ВЫХОДИ',
+      `Потрачено ${fmt(spentToday)} из ${fmt(dailyLimit)} млн (${Math.round(usedPct)}%).`,
+      [{cls:'n-danger',txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций с ненулевой скидкой'},
+       {cls:'n-danger',txt:'<strong>Шаг 2.</strong> Выйди из Apple с ненулевой скидкой'},
+       {cls:'n-danger',txt:'<strong>Шаг 3.</strong> Выйди из всего на 0%'},
+       {cls:'n-gray',  txt:`Следующий вход — завтра. Лимит: ${fmt(dailyLimit)} млн`}]);
+  } else if(usedPct>=70){
+    const tailNote=tailBudget>0.03?`Хвост добавит ~${fmt(tailBudget)} млн.`:'Темп низкий.';
+    if(rate30>=5){
+      renderCmd('s-danger','🔴 СРОЧНО — ВЫХОДИ ИЗ ВСЕХ АКЦИЙ',
+        `${Math.round(usedPct)}% лимита + темп ${rate30} зак./30мин. ${tailNote}`,
+        [{cls:'n-danger',txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций с ненулевой скидкой'},
+         {cls:'n-danger',txt:'<strong>Шаг 2.</strong> Выйди из Apple с ненулевой скидкой'},
+         {cls:'n-danger',txt:'<strong>Шаг 3.</strong> Выйди из всего на 0%'},
+         {cls:'n-gray',  txt:'Выход занимает до 6 часов'}]);
+    } else {
+      renderCmd('s-danger','🔴 ВЫХОДИ ПЛАВНО — ОБРАТНЫЙ ПОРЯДОК',
+        `${Math.round(usedPct)}% лимита. ${tailNote} Темп низкий — поэтапно.`,
+        [{cls:'n-danger',txt:'<strong>Шаг 1.</strong> Apple 1% → переведи на 0%'},
+         {cls:'n-danger',txt:'<strong>Шаг 2.</strong> Подожди 15 мин, оцени темп'},
+         {cls:'n-danger',txt:'<strong>Шаг 3.</strong> Выйди из всех не-Apple с ненулевой скидкой'},
+         {cls:'n-danger',txt:'<strong>Шаг 4.</strong> Выйди из всего на 0%'}]);
+    }
+  } else if(usedPct>=50){
+    if(tailBudget>=freeToday*0.5&&rate30>=5){
+      renderCmd('s-part','🟠 ОСТАВЬ ТОЛЬКО APPLE 0%',
+        `${Math.round(usedPct)}% лимита, хвост ~${fmt(tailBudget)} млн ≥ половины остатка.`,
+        [{cls:'n-part', txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций'},
+         {cls:'n-part', txt:'<strong>Шаг 2.</strong> Выйди из Apple с ненулевой скидкой'},
+         {cls:'n-apple',txt:'<strong>Шаг 3.</strong> Apple 0% — <span class="apple-tag">оставь</span>'},
+         {cls:'n-watch',txt:`При ${fmt(dailyLimit*0.70)} млн — выходи полностью`}]);
+    } else if(usedPct>=60||rate30>=8){
+      renderCmd('s-part','🟠 ОСТАВЬ ТОЛЬКО 0%',
+        `${Math.round(usedPct)}% лимита${rate30>=8?`, темп ${rate30} зак./30мин`:''}. Убираем все скидки.`,
+        [{cls:'n-part', txt:'<strong>Шаг 1.</strong> Выйди из всех акций с ненулевой скидкой (включая Apple)'},
+         {cls:'n-watch',txt:'<strong>Шаг 2.</strong> Всё на 0% — оставь'},
+         {cls:'n-watch',txt:`При ${fmt(dailyLimit*0.70)} млн — выходи полностью`}]);
+    } else if(rate30>=5){
+      renderCmd('s-part','🟠 ОСТАВЬ ТОЛЬКО APPLE',
+        `${Math.round(usedPct)}% лимита, темп ${rate30} зак./30мин.`,
+        [{cls:'n-part', txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций с ненулевой скидкой'},
+         {cls:'n-apple',txt:'<strong>Шаг 2.</strong> Apple 0–1% — <span class="apple-tag">оставь</span>'},
+         {cls:'n-watch',txt:`Следи каждые 15 мин. При ${fmt(dailyLimit*0.65)} млн — следующий шаг`}]);
+    } else {
+      renderCmd('s-watch','🟡 НАБЛЮДЕНИЕ — АКЦИИ РАБОТАЮТ',
+        `${Math.round(usedPct)}% лимита (${fmt(spentToday)} из ${fmt(dailyLimit)} млн).`,
+        [{cls:'n-watch',txt:'Акции оставь'},
+         {cls:'n-watch',txt:'Проверяй каждые 15 мин'},
+         {cls:'n-watch',txt:`При ${fmt(dailyLimit*0.70)} млн — инициируй выход`},
+         {cls:'n-gray', txt:`Остаток: ~${fmt(freeToday)} млн`}]);
+    }
+  } else if(step>=1&&hour<15){
+    if(usedPct>=40&&tempoHot){
+      const ex={3:[{cls:'n-part',txt:'Apple 1% → переведи на 0%'},{cls:'n-part',txt:'Подожди 30 мин'},{cls:'n-danger',txt:'Если не падает — выходи из не-Apple, потом Apple'}],
+                2:[{cls:'n-part',txt:'Выйди из всех не-Apple'},{cls:'n-apple',txt:'Apple 0% — <span class="apple-tag">оставь</span>'},{cls:'n-watch',txt:'Если темп не падает — выходи полностью'}],
+                1:[{cls:'n-danger',txt:'Выйди из Apple 0% — полная остановка'}]};
+      renderCmd('s-part',`🟠 СТУПЕНЬ ${step} — ТЕМП ВЫСОКИЙ, ШАГ НАЗАД`,
+        `${stepOrders} заказов за ${stepMin} мин ≥ ${THRESH}. Откатывайся.`,ex[step]||ex[1]);
+    } else if(!windowDone){
+      renderCmd('s-watch',`🟡 СТУПЕНЬ ${step} — ЖДЁМ ${minLeft} МИН`,
+        `Активна ${stepMin} мин, упало ${stepOrders} заказов.`,
+        [{cls:'n-watch',txt:`Ничего не меняй — жди ещё ${minLeft} мин`},
+         {cls:'n-watch',txt:`< ${THRESH} заказов за 2ч → ступень ${Math.min(step+1,3)}`},
+         {cls:'n-watch',txt:`≥ ${THRESH} заказов → держишься на ступени ${step}`}]);
+    } else if(windowDone&&tempoHot){
+      renderCmd('s-watch',`🟡 СТУПЕНЬ ${step} — ДЕРЖИСЬ`,
+        `${stepOrders} заказов за ${stepMin} мин — темп достаточный.`,
+        [{cls:'n-watch',txt:`Остаёшься на ступени ${step}`},
+         {cls:'n-watch',txt:`При ${fmt(dailyLimit*0.70)} млн — инициируй выход`}]);
+    } else if(canAdvance){
+      if(step===1){
+        renderCmd('s-go','✅ СТУПЕНЬ 1 → 2: ДОБАВЛЯЙ ВСЁ НА 0%',
+          `${stepOrders} заказов за ${stepMin} мин < ${THRESH}. Расширяем.`,
+          [{cls:'n-go',  txt:'Добавь все остальные товары (не Apple) с <strong>0%</strong>'},
+           {cls:'n-go',  txt:'Apple 0% — уже работает, не трогай'},
+           {cls:'n-watch',txt:'Обнови «Ступень» → 2, сбрось счётчики'}]);
+      } else if(step===2){
+        renderCmd('s-go','✅ СТУПЕНЬ 2 → 3: ПЕРЕВОДИ APPLE НА 1%',
+          `${stepOrders} заказов за ${stepMin} мин < ${THRESH}. Максимальный режим.`,
+          [{cls:'n-go',  txt:'Переведи Apple с 0% на <strong>1%</strong>'},
+           {cls:'n-go',  txt:'Всё остальное на 0% — не трогай'},
+           {cls:'n-watch',txt:'Обнови «Ступень» → 3, сбрось счётчики'}]);
+      } else {
+        renderCmd('s-watch','🟡 СТУПЕНЬ 3 — МАКСИМАЛЬНЫЙ РЕЖИМ',
+          `Apple 1% + всё 0%.`,
+          [{cls:'n-watch',txt:'Это максимум — ничего не добавляй'},
+           {cls:'n-watch',txt:`При ${fmt(dailyLimit*0.70)} млн — начинай плавный выход`}]);
+      }
+    }
+  } else if(hour>=15&&usedPct>=30){
+    renderCmd('s-stop','🚫 НЕ ВХОДИ — ДЕНЬ ЗАКРЫТ',
+      `${hhmm} — заказы после 15:00 идут на завтра. Потрачено ${Math.round(usedPct)}%.`,
+      [{cls:'n-stop',txt:'Не входи — заказы пойдут на завтра'},
+       {cls:'n-stop',txt:`Завтрашний лимит: ${fmt(dailyLimit)} млн`}]);
+  } else {
+    const daysElapsed=(period===1?CFG.p1days:CFG.p2days)-daysLeft;
+    const idealByNow=(totalPeriod/daysInPeriod)*Math.max(0,daysElapsed-1);
+    const overspent=spentInPeriod-spentToday-idealByNow;
+    if(overspent>0.4&&usedPct<30&&dailyLimit<(totalPeriod/daysInPeriod)*0.75){
+      renderCmd('s-stop','🚫 НЕ ВХОДИ — ПРЕДЫДУЩИЕ ДНИ ПЕРЕЖГЛИ',
+        `Перерасход: +${fmt(overspent)} млн. Лимит упал до ${fmt(dailyLimit)} млн (норма ${fmt(totalPeriod/daysInPeriod)} млн).`,
+        [{cls:'n-stop',txt:'Не входи — дай периоду прийти в баланс'},
+         {cls:'n-gray',txt:`Остаток: ${fmt(freePeriod)} млн на ${daysLeft} дн.`}]);
+    } else if(rate30>=6&&usedPct>=20){
+      renderCmd('s-stop','🚫 НЕ ВХОДИ — ЗАКАЗОВ И ТАК ДОСТАТОЧНО',
+        `${rate30} зак./30мин без акций — лимит выберется органически.`,
+        [{cls:'n-stop', txt:'Акции не нужны'},
+         {cls:'n-watch',txt:`При ${fmt(dailyLimit*0.70)} млн — выходи из текущих`}]);
+    } else if(freeToday<0.23){
+      renderCmd('s-stop','🚫 НЕ ВХОДИ — ОСТАТОК СЛИШКОМ МАЛ',
+        `Свободно ${fmt(freeToday)} млн (≈${Math.floor(freeToday/0.077)} заказа).`,
+        [{cls:'n-stop',txt:'Не входи — 1–2 заказа закроют остаток'},
+         {cls:'n-gray',txt:`Завтра: ${fmt(dailyLimit)} млн`}]);
+    } else if(hour<15){
+      const timeNote=hour>=13.5?`⚠️ До 15:00 < ${Math.round((15-hour)*60)} мин.`:`До 15:00 ещё ${Math.floor(15-hour)}ч ${Math.round((15-hour)%1*60)}мин.`;
+      renderCmd('s-go','✅ НАЧИНАЙ ВХОД — СТУПЕНЬ 1: APPLE 0%',
+        `${Math.round(usedPct)}% лимита (${fmt(spentToday)} из ${fmt(dailyLimit)} млн). ${timeNote}`,
+        [{cls:'n-go',  txt:'Войди только с Apple на <strong>0%</strong>'},
+         {cls:'n-go',  txt:'Жди 2 часа, считай заказы'},
+         {cls:'n-go',  txt:`< ${THRESH} заказов за 2ч → ступень 2`},
+         {cls:'n-watch',txt:`≥ ${THRESH} заказов → держись на ступени 1`},
+         {cls:'n-gray', txt:`Остаток: ~${fmt(freeToday)} млн = ~${fmt(freeToday/0.70)} млн выручки`}]);
+    } else {
+      renderCmd('s-watch','🟡 ПОСЛЕ 15:00 — ЗАКАЗЫ НА ЗАВТРА',
+        `Потрачено мало (${Math.round(usedPct)}%). Вход сейчас — в завтрашний лимит.`,
+        [{cls:'n-watch',txt:'Если входишь — <span class="apple-tag">Apple 0%</span> как ступень 1'},
+         {cls:'n-gray', txt:`Завтрашний лимит: ${fmt(dailyLimit)} млн`}]);
+    }
   }
 
-  // 2. Дневной лимит исчерпан (≥ 100%)
-  if(usedPct >= 100){
-    return renderCmd('s-danger',
-      '⛔ ДНЕВНОЙ ЛИМИТ ВЫБРАН — ВЫХОДИ ИЗ ВСЕХ АКЦИЙ',
-      `Сегодня потрачено ${fmt(spentToday)} из ${fmt(dailyLimit)} млн (${Math.round(usedPct)}%). Лимит исчерпан на сегодня.`,
-      [
-        {cls:'n-danger',txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций с ненулевой скидкой'},
-        {cls:'n-danger',txt:'<strong>Шаг 2.</strong> Выйди из Apple с ненулевой скидкой'},
-        {cls:'n-danger',txt:'<strong>Шаг 3.</strong> Выйди из всего на 0%'},
-        {cls:'n-gray',  txt:`Следующий вход — завтра. Лимит: ${fmt(dailyLimit)} млн`},
-      ]);
+  // ── БУСТ ──
+  calcBoost(alive,boostNow,boostMin,rate30,usedPct);
+  // ── МАРЖА ──
+  calcMargin(alive,marginNow,boostNow,rate30,usedPct);
+}
+
+function calcBoost(alive,boostNow,boostMin,rate30,usedPct){
+  if(alive===1&&rate30>=2){
+    if(boostNow===0){
+      renderSecCmd('js-boost-box','js-boost-hl','js-boost-why','js-boost-steps','s-neutral','💨 Буст — не нужен','Заказы идут, буст не требуется.',[{cls:'n-gray',txt:'Работай на акциях'}]);
+    } else if(boostNow>0&&boostMin>=30){
+      renderSecCmd('js-boost-box','js-boost-hl','js-boost-why','js-boost-steps','s-boost','💨 Буст — СНИЖАЙ',`Кабинет ожил (${rate30} зак./30мин), снижай каждые 30 мин.`,
+        [{cls:'n-boost',txt:`Снизь: ${boostNow}% → ${Math.max(0,boostNow-1)}%`},
+         {cls:'n-boost',txt:'Снижай каждые 30 мин до 0%'}]);
+    } else {
+      renderSecCmd('js-boost-box','js-boost-hl','js-boost-why','js-boost-steps','s-boost','💨 Буст — ЖДИ ПЕРЕД СНИЖЕНИЕМ',`Кабинет ожил, но буст ${boostNow}% включён ${boostMin} мин.`,
+        [{cls:'n-watch',txt:`Жди ещё ${30-boostMin} мин, затем снижай`}]);
+    }
+  } else if(alive===0){
+    if(boostNow===0){
+      renderSecCmd('js-boost-box','js-boost-hl','js-boost-why','js-boost-steps','s-boost','💨 Буст — ВКЛЮЧАЙ 3%','Кабинет не живёт. Запускаем буст.',
+        [{cls:'n-boost',txt:'Включи буст <strong>3%</strong>'},
+         {cls:'n-boost',txt:'Жди 2–3 часа'},
+         {cls:'n-watch',txt:'Не ожил → 4%, потом 5%'}]);
+    } else if(boostNow>=3&&boostNow<5&&boostMin>=150){
+      renderSecCmd('js-boost-box','js-boost-hl','js-boost-why','js-boost-steps','s-boost',`💨 Буст — ПОДНИМАЙ ДО ${boostNow+1}%`,`${boostMin} мин на ${boostNow}% — не ожил.`,
+        [{cls:'n-boost',txt:`Подними: ${boostNow}% → <strong>${boostNow+1}%</strong>`},
+         {cls:'n-boost',txt:'Жди ещё 2–3 часа'}]);
+    } else if(boostNow===5&&boostMin>=150){
+      renderSecCmd('js-boost-box','js-boost-hl','js-boost-why','js-boost-steps','s-boost','💨 Буст 5% — СЛЕДИ СТРЕМИТЕЛЬНО','Как только пойдут заказы — сразу снижай.',
+        [{cls:'n-boost',txt:'Первые заказы → снижай на 1%'},
+         {cls:'n-boost',txt:'Снижай каждые 30 мин до 0–2%'}]);
+    } else {
+      renderSecCmd('js-boost-box','js-boost-hl','js-boost-why','js-boost-steps','s-boost',`💨 Буст — ЖДЁМ НА ${boostNow}%`,`Активен ${boostMin} мин. До след. оценки: ${150-boostMin} мин.`,
+        [{cls:'n-watch',txt:`Жди ещё ${Math.max(0,150-boostMin)} мин`}]);
+    }
+  } else if(alive===1&&rate30<2&&usedPct<30){
+    if(boostNow===0){
+      renderSecCmd('js-boost-box','js-boost-hl','js-boost-why','js-boost-steps','s-boost','💨 Буст — РАССМОТРИ 2%','Кабинет жив, но темп слабый.',
+        [{cls:'n-boost',txt:'Включи буст <strong>2%</strong>'},
+         {cls:'n-boost',txt:'Жди 2–3 часа, следи за динамикой'}]);
+    } else {
+      renderSecCmd('js-boost-box','js-boost-hl','js-boost-why','js-boost-steps','s-neutral',`💨 Буст ${boostNow}% — наблюдение`,`Активен ${boostMin} мин. Темп пока слабый.`,
+        [{cls:'n-watch',txt:'Жди — наблюдай за динамикой'}]);
+    }
+  } else {
+    renderSecCmd('js-boost-box','js-boost-hl','js-boost-why','js-boost-steps','s-neutral','💨 Буст — норма','Не требуется.',[{cls:'n-gray',txt:'Работай на акциях'}]);
   }
+}
 
-  // 3. Красная зона — 70–99% + с учётом хвоста уйдём за лимит
-  if(usedPct >= 70){
-    const tailNote = tailBudget > 0.03
-      ? `При темпе ${rate30} зак./30мин хвост выхода добавит ещё ~${fmt(tailBudget)} млн закупки.`
-      : 'Темп низкий — хвост минимальный, но лимит уже критически близко.';
-    return renderCmd('s-danger',
-      '🔴 ВЫХОДИ ИЗ АКЦИЙ ПРЯМО СЕЙЧАС',
-      `Использовано ${Math.round(usedPct)}% дневного лимита (${fmt(spentToday)} из ${fmt(dailyLimit)} млн). ${tailNote}`,
-      [
-        {cls:'n-danger',txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций с ненулевой скидкой'},
-        {cls:'n-danger',txt:'<strong>Шаг 2.</strong> Выйди из Apple с ненулевой скидкой'},
-        {cls:'n-gray',  txt:'<strong>Шаг 3.</strong> Акции на 0% — можно оставить, они дают минимум'},
-        {cls:'n-gray',  txt:'Выход занимает до 6 часов — хвост продолжит давать заказы'},
-      ]);
+function calcMargin(alive,marginNow,boostNow,rate30,usedPct){
+  const NORM_MIN=3.5,NORM_MAX=5.5;
+  const isNorm=marginNow>=NORM_MIN&&marginNow<=NORM_MAX;
+  if(usedPct>=95&&boostNow===0&&marginNow<=NORM_MAX){
+    renderSecCmd('js-margin-box','js-margin-hl','js-margin-why','js-margin-steps','s-margin','📊 Маржа — ПОДНЯТЬ КАК СТОП-КРАН','Лимит выбран, буст выкл. Крайняя мера.',
+      [{cls:'n-margin',txt:'Подними маржу выше 5,5% — продажи встанут'},
+       {cls:'n-margin',txt:'Стоп-кран. Не держи долго.'}]);
+  } else if(alive===0&&boostNow>=5&&marginNow>NORM_MIN){
+    renderSecCmd('js-margin-box','js-margin-hl','js-margin-why','js-margin-steps','s-margin','📊 Маржа — СНИЗИТЬ ДЛЯ ОЖИВЛЕНИЯ',`Кабинет мёртв, буст 5% не помогает. Снижаем маржу (${fmt(marginNow)}%).`,
+      [{cls:'n-margin',txt:`Снизь на 0,5% → ${fmt(marginNow-0.5)}%`},
+       {cls:'n-margin',txt:'Жди 3–4 часа'},
+       {cls:'n-margin',txt:`Не ожил → ещё −0,5%, минимум ${NORM_MIN}%`},
+       {cls:'n-gray',  txt:'Ожил → восстанавливай поступательно'}]);
+  } else if(marginNow>NORM_MAX&&usedPct<90){
+    renderSecCmd('js-margin-box','js-margin-hl','js-margin-why','js-margin-steps','s-margin','📊 Маржа — СНИЗИТЬ ДО НОРМЫ',`${fmt(marginNow)}% выше нормы (${NORM_MIN}–${NORM_MAX}%). Тормозит продажи.`,
+      [{cls:'n-margin',txt:`Снизь → ${NORM_MAX}% (шаг 0,5%, жди 3–4ч)`}]);
+  } else if(isNorm){
+    renderSecCmd('js-margin-box','js-margin-hl','js-margin-why','js-margin-steps','s-neutral','📊 Маржа — в норме',`${fmt(marginNow)}% — норма (${NORM_MIN}–${NORM_MAX}%).`,[{cls:'n-gray',txt:'Не трогай'}]);
+  } else {
+    renderSecCmd('js-margin-box','js-margin-hl','js-margin-why','js-margin-steps','s-neutral','📊 Маржа — норма',`${fmt(marginNow)}%.`,[{cls:'n-gray',txt:'В допустимом диапазоне'}]);
   }
-
-  // 4а. Частичный выход — подсостояние 1: умеренный перегрев (50–59%, темп ≥ 5)
-  //     Оставь только Apple (любая ставка), выйди из всего остального с ненулевой скидкой
-  if(usedPct >= 50 && usedPct < 60 && rate30 >= 5){
-    return renderCmd('s-part',
-      '🟠 ЧАСТИЧНО ВЫХОДИ — ОСТАВЬ ТОЛЬКО APPLE',
-      `Использовано ${Math.round(usedPct)}% лимита, темп ${rate30} зак./30мин. Хвост выхода добавит ~${fmt(tailBudget)} млн. Сокращаем поток, Apple пока держим.`,
-      [
-        {cls:'n-part',  txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций с ненулевой скидкой'},
-        {cls:'n-apple', txt:'<strong>Шаг 2.</strong> Apple 0–1% — <span class="apple-tag">оставь</span>'},
-        {cls:'n-watch', txt:`<strong>Шаг 3.</strong> Следи каждые 15 мин. При ${fmt(dailyLimit*0.65)} млн — переходи к следующему шагу`},
-        {cls:'n-gray',  txt:`Остаток сегодня: ~${fmt(freeToday)} млн`},
-      ]);
-  }
-
-  // 4б. Частичный выход — подсостояние 2: сильный перегрев (60–69%, любой темп / 50–69%, темп ≥ 8)
-  //     Оставь только 0% (все товары), выйди из всего с ненулевой скидкой
-  if((usedPct >= 60 && usedPct < 70) || (usedPct >= 50 && usedPct < 70 && rate30 >= 8)){
-    return renderCmd('s-part',
-      '🟠 ЧАСТИЧНО ВЫХОДИ — ОСТАВЬ ТОЛЬКО 0%',
-      `Использовано ${Math.round(usedPct)}% лимита${rate30 >= 8 ? `, темп критический: ${rate30} зак./30мин` : ''}. Хвост добавит ~${fmt(tailBudget)} млн. Убираем все скидки — оставляем только нулевые ставки.`,
-      [
-        {cls:'n-part',  txt:'<strong>Шаг 1.</strong> Выйди из всех акций с ненулевой скидкой — и Apple, и остальные'},
-        {cls:'n-watch', txt:'<strong>Шаг 2.</strong> Акции на <strong>0%</strong> — <span class="apple-tag" style="background:#1e2a1e;color:#00e87a">оставь</span> все'},
-        {cls:'n-watch', txt:`<strong>Шаг 3.</strong> Следи каждые 10 мин. При ${fmt(dailyLimit*0.70)} млн — выходи полностью`},
-        {cls:'n-gray',  txt:`Остаток сегодня: ~${fmt(freeToday)} млн`},
-      ]);
-  }
-
-  // 4в. Частичный выход — подсостояние 3: предкритический (50–69%, темп ≥ 5, и хвост почти съедает остаток)
-  //     Оставь только Apple 0% — самый безопасный вариант
-  if(usedPct >= 50 && usedPct < 70 && rate30 >= 5 && tailBudget >= freeToday * 0.5){
-    return renderCmd('s-part',
-      '🟠 ЧАСТИЧНО ВЫХОДИ — ОСТАВЬ ТОЛЬКО APPLE 0%',
-      `Использовано ${Math.round(usedPct)}% лимита, хвост выхода (~${fmt(tailBudget)} млн) покрывает больше половины остатка (${fmt(freeToday)} млн). Максимальное сокращение риска.`,
-      [
-        {cls:'n-part',  txt:'<strong>Шаг 1.</strong> Выйди из всех не-Apple акций (любая ставка)'},
-        {cls:'n-part',  txt:'<strong>Шаг 2.</strong> Выйди из Apple с ненулевой скидкой'},
-        {cls:'n-apple', txt:'<strong>Шаг 3.</strong> Apple 0% — <span class="apple-tag">оставь</span> только её'},
-        {cls:'n-watch', txt:`<strong>Шаг 4.</strong> При ${fmt(dailyLimit*0.70)} млн потраченных — выходи полностью`},
-        {cls:'n-gray',  txt:`Остаток сегодня: ~${fmt(freeToday)} млн`},
-      ]);
-  }
-
-  // 5. Жёлтая зона — 50–69%, темп умеренный
-  if(usedPct >= 50){
-    return renderCmd('s-watch',
-      '🟡 НАБЛЮДЕНИЕ — АКЦИИ РАБОТАЮТ, СЛЕДИ ЗА ТЕМПОМ',
-      `Использовано ${Math.round(usedPct)}% дневного лимита (${fmt(spentToday)} из ${fmt(dailyLimit)} млн). Пока в норме, но близко к порогу.`,
-      [
-        {cls:'n-watch',txt:'Акции оставь — продолжают работать'},
-        {cls:'n-watch',txt:'Проверяй заказы каждые 15 минут'},
-        {cls:'n-watch',txt:`При ${fmt(dailyLimit*0.70)} млн потраченных — инициируй выход`},
-        {cls:'n-gray', txt:`Остаток сегодня: ~${fmt(freeToday)} млн`},
-      ]);
-  }
-
-  // ── СТОП-состояния: входить не нужно ──
-
-  // 6. СТОП — после 15:00 и уже потрачено нормально (≥ 30%)
-  if(hour >= 15 && usedPct >= 30){
-    return renderCmd('s-stop',
-      '🚫 НЕ ВХОДИ — ДЕНЬ ЗАКРЫТ ДЛЯ АКЦИЙ',
-      `Уже ${hhmm} — заказы после 15:00 идут на завтра. Сегодня уже потрачено ${Math.round(usedPct)}% лимита (${fmt(spentToday)} млн). Вход сейчас съест завтрашний бюджет наперёд.`,
-      [
-        {cls:'n-stop',txt:'Не входи — заказы пойдут на завтра за счёт завтрашнего лимита'},
-        {cls:'n-stop',txt:`Завтрашний лимит: ${fmt(dailyLimit)} млн — не трать его сегодня`},
-        {cls:'n-gray',txt:'Если акции уже работают — реши: оставить для завтра или выйти сейчас'},
-      ]);
-  }
-
-  // 7. СТОП — цикловой бюджет израсходован непропорционально (горели бюджеты)
-  // Проверяем: потрачено за цикл больше чем должны были к этому дню
-  const daysElapsed  = 10 - daysLeft + 1; // сколько дней уже прошло (включая сегодня)
-  const idealSpentByNow = (limit / 10) * (daysElapsed - 1); // идеальный расход к началу сегодня
-  const overspentCycle  = spentCycle - spentToday - idealSpentByNow; // перерасход предыдущих дней
-  if(overspentCycle > 0.5 && usedPct < 30 && dailyLimit < (limit/10)*0.75){
-    return renderCmd('s-stop',
-      '🚫 НЕ ВХОДИ — ПРЕДЫДУЩИЕ ДНИ ПЕРЕЖГЛИ БЮДЖЕТ',
-      `Предыдущие дни потратили на ${fmt(overspentCycle)} млн больше нормы. Из-за этого твой дневной лимит упал до ${fmt(dailyLimit)} млн (норма ${fmt(limit/10)} млн). Входить в акцию — значит рисковать снова выбиться из ритма.`,
-      [
-        {cls:'n-stop',txt:'Не входи в акцию сегодня — дай циклу прийти в баланс'},
-        {cls:'n-stop',txt:`Лимит урезан: ${fmt(dailyLimit)} млн вместо ${fmt(limit/10)} млн из-за перерасхода`},
-        {cls:'n-gray',txt:'Органические продажи сегодня — нормально. Не усугубляй.'},
-        {cls:'n-gray',txt:`Оставшийся цикловой бюджет: ${fmt(freeCycle)} млн на ${daysLeft} дн.`},
-      ]);
-  }
-
-  // 8. СТОП — высокий органический темп, без акции и так хорошо
-  if(rate30 >= 6 && usedPct >= 20){
-    return renderCmd('s-stop',
-      '🚫 НЕ ВХОДИ — ЗАКАЗОВ И ТАК ДОСТАТОЧНО',
-      `За последние 30 минут упало ${rate30} заказов без новых акций. При таком темпе дневной лимит ${fmt(dailyLimit)} млн будет выбран органически — акция только ускорит перебор.`,
-      [
-        {cls:'n-stop',  txt:'Акции не нужны — органический спрос уже работает'},
-        {cls:'n-watch', txt:`Следи: при ${fmt(dailyLimit*0.70)} млн потраченных — выходи из текущих акций`},
-        {cls:'n-gray',  txt:'Сохрани бюджет — органические заказы выгоднее промо-зависимых'},
-      ]);
-  }
-
-  // 9. СТОП — очень маленький остаток на сегодня (< 3 заказов)
-  if(freeToday < 0.23){
-    return renderCmd('s-stop',
-      '🚫 НЕ ВХОДИ — ОСТАТОК ЛИМИТА СЛИШКОМ МАЛ',
-      `Свободный лимит на сегодня — ${fmt(freeToday)} млн (≈ ${Math.floor(freeToday/0.077)} заказа). Акция не окупит риск: даже 1–2 заказа закроют весь остаток.`,
-      [
-        {cls:'n-stop',txt:'Не входи — остаток слишком мал для контролируемой работы'},
-        {cls:'n-gray',txt:`Завтра лимит: ${fmt(dailyLimit)} млн — тогда и работай`},
-      ]);
-  }
-
-  // 10. Зелёная зона до 15:00 — входи
-  if(hour < 15){
-    const timeNote = hour >= 13.5
-      ? `⚠️ Сейчас ${hhmm} — до 15:00 меньше ${Math.round((15-hour)*60)} мин. Если войдёшь — хвост частично уйдёт на завтра.`
-      : `До 15:00 ещё ${Math.floor(15-hour)}ч ${Math.round((15-hour)%1*60)}мин — хорошее время.`;
-    return renderCmd('s-go',
-      '✅ МОЖНО ВХОДИТЬ В АКЦИЮ',
-      `Потрачено ${Math.round(usedPct)}% дневного лимита (${fmt(spentToday)} из ${fmt(dailyLimit)} млн). Запас есть. ${timeNote}`,
-      [
-        {cls:'n-go',  txt:'Входи с <strong>0%</strong> на всё (или <strong>0–1%</strong> на Apple)'},
-        {cls:'n-go',  txt:`Порог выхода: ${fmt(dailyLimit*0.70)} млн потрачено сегодня — следи каждые 15–30 мин`},
-        {cls:'n-gray',txt:`Остаток сегодня: ~${fmt(freeToday)} млн закупки = ~${fmt(freeToday/0.70)} млн выручки`},
-      ]);
-  }
-
-  // 11. После 15:00, потрачено мало (< 30%) — можно войти, но заказы на завтра
-  if(hour >= 15 && usedPct < 30){
-    return renderCmd('s-watch',
-      '🟡 МОЖНО ВОЙТИ — НО ЗАКАЗЫ ПОЙДУТ НА ЗАВТРА',
-      `Сегодня потрачено мало (${Math.round(usedPct)}%). Если войти сейчас — все заказы зачтутся в завтрашний лимит (${fmt(dailyLimit)} млн). Реши осознанно.`,
-      [
-        {cls:'n-watch',txt:'Войти можно — но все заказы будут <strong>завтрашними</strong>'},
-        {cls:'n-watch',txt:'Убедись, что завтрашний лимит не нужен для другого'},
-        {cls:'n-apple',txt:'Если входишь — только <span class="apple-tag">Apple</span> 0–1% или всё 0%'},
-        {cls:'n-gray', txt:`Завтрашний лимит: ${fmt(dailyLimit)} млн. Не превысить.`},
-      ]);
-  }
-
-  renderCmd('s-idle','Данные введены, нажми ещё раз','«Рассчитать»',[]);
 }
 </script>
 </body>
