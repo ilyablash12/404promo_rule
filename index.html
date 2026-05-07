@@ -287,6 +287,12 @@ body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;
     <div class="ig">
       <label>Потрачено сегодня, млн ₽</label>
       <input type="number" id="i-spent-today" value="0" step="0.05" min="0">
+      <div class="hint">Закупка по заказам до 15:00</div>
+    </div>
+    <div class="ig">
+      <label>Заказов на завтра, млн ₽ выручки</label>
+      <input type="number" id="i-tomorrow-orders" value="0" step="0.1" min="0">
+      <div class="hint">Уже есть после 15:00 — система сама × 0,7</div>
     </div>
     <div class="ig">
       <label>Заказов за 30 мин</label>
@@ -545,7 +551,9 @@ function getPeriodBudget(daysLeft){
 
 function calculate(){
   const spentCycle =parseFloat(document.getElementById('i-spent-cycle').value)||0;
-  const spentToday =parseFloat(document.getElementById('i-spent-today').value)||0;
+  const spentToday        = parseFloat(document.getElementById('i-spent-today').value)        || 0;
+  const tomorrowRevenue   = parseFloat(document.getElementById('i-tomorrow-orders').value)  || 0;
+  const tomorrowReserved  = tomorrowRevenue * 0.7; // уже зарезервировано из завтрашнего лимита
 
   // Считаем дни из даты погашения
   const paydateVal = document.getElementById('i-paydate').value;
@@ -575,6 +583,9 @@ function calculate(){
   const dailyLimit=freePeriod/daysLeft;
   const usedPct=dailyLimit>0?(spentToday/dailyLimit)*100:100;
   const freeToday=Math.max(0,dailyLimit-spentToday);
+  // Завтрашний лимит и остаток после уже зарезервированных заказов
+  const tomorrowLimit = freePeriod > 0 ? (freePeriod - spentToday) / Math.max(1, daysLeft - 1) : 0;
+  const tomorrowFree  = Math.max(0, tomorrowLimit - tomorrowReserved);
   const tailHoursToday=Math.max(0,Math.min(hour+6,15)-hour);
   const tailBudget=rate30*2*tailHoursToday*0.077;
 
@@ -591,7 +602,8 @@ function calculate(){
   pb.textContent=`Период ${period}`;
   const cycleStartStr = cycleStart.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
   const paydateStr    = paydate.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
-  document.getElementById('js-pnote').textContent=`День ${dayOfCycle} из ${totalCycleDays} (${cycleStartStr}–${paydateStr}) · ${fmt(dailyLimit)} млн/день`;
+  const pnoteBase = `День ${dayOfCycle} из ${totalCycleDays} (${cycleStartStr}–${paydateStr}) · ${fmt(dailyLimit)} млн/день`;
+  document.getElementById('js-pnote').textContent = pnoteBase;
 
   // Metrics
   document.getElementById('m-daily').textContent=fmt(dailyLimit);
@@ -702,10 +714,16 @@ function calculate(){
       }
     }
   } else if(hour>=15&&usedPct>=30){
-    renderCmd('s-stop','🚫 НЕ ВХОДИ — ДЕНЬ ЗАКРЫТ',
-      `${hhmm} — заказы после 15:00 идут на завтра. Потрачено ${Math.round(usedPct)}%.`,
-      [{cls:'n-stop',txt:'Не входи — заказы пойдут на завтра'},
-       {cls:'n-stop',txt:`Завтрашний лимит: ${fmt(dailyLimit)} млн`}]);
+    const tomorrowPct2 = tomorrowLimit > 0 ? (tomorrowReserved / tomorrowLimit) * 100 : 0;
+    const reservedNote = tomorrowReserved > 0
+      ? `Из завтрашнего лимита (${fmt(tomorrowLimit)} млн) уже зарезервировано ${fmt(tomorrowReserved)} млн — свободно ${fmt(tomorrowFree)} млн.`
+      : `Завтрашний лимит: ${fmt(tomorrowLimit)} млн — пока свободен.`;
+    renderCmd('s-stop','🚫 СЕГОДНЯ ЗАКРЫТО — СМОТРИ НА ЗАВТРА',
+      `${hhmm} — заказы идут на завтра. Сегодня потрачено ${Math.round(usedPct)}%. ${reservedNote}`,
+      [{cls:'n-stop', txt:'Не входи ради сегодня — лимит выбран'},
+       {cls:'n-gray', txt:`Завтра свободно: ${fmt(tomorrowFree)} млн из ${fmt(tomorrowLimit)} млн`},
+       ...(tomorrowFree > 0.3 ? [{cls:'n-watch',txt:'Если хочешь добрать на завтра — войди осторожно в ступень 1'}] : [{cls:'n-stop',txt:'Завтрашний лимит почти исчерпан — не входи'}])
+      ]);
   } else {
     const daysElapsed=(period===1?CFG.p1days:CFG.p2days)-daysLeft;
     const idealByNow=(totalPeriod/daysInPeriod)*Math.max(0,daysElapsed-1);
@@ -735,10 +753,34 @@ function calculate(){
          {cls:'n-watch',txt:`≥ ${THRESH} заказов → держись на ступени 1`},
          {cls:'n-gray', txt:`Остаток: ~${fmt(freeToday)} млн = ~${fmt(freeToday/0.70)} млн выручки`}]);
     } else {
-      renderCmd('s-watch','🟡 ПОСЛЕ 15:00 — ЗАКАЗЫ НА ЗАВТРА',
-        `Потрачено мало (${Math.round(usedPct)}%). Вход сейчас — в завтрашний лимит.`,
-        [{cls:'n-watch',txt:'Если входишь — <span class="apple-tag">Apple 0%</span> как ступень 1'},
-         {cls:'n-gray', txt:`Завтрашний лимит: ${fmt(dailyLimit)} млн`}]);
+      // После 15:00 — считаем завтрашний остаток
+    const tomorrowPct = tomorrowLimit > 0 ? (tomorrowReserved / tomorrowLimit) * 100 : 0;
+    if(tomorrowReserved > 0){
+      if(tomorrowFree <= 0.15){
+        renderCmd('s-stop','🚫 ЗАВТРА — ЛИМИТ УЖЕ ВЫБРАН',
+          `Завтрашний лимит: ${fmt(tomorrowLimit)} млн. Уже зарезервировано заказами: ${fmt(tomorrowReserved)} млн (${Math.round(tomorrowPct)}%). Свободно: ~${fmt(tomorrowFree)} млн — почти ничего.`,
+          [{cls:'n-stop', txt:'Не входи в акцию — завтрашний лимит исчерпан заказами'},
+           {cls:'n-gray', txt:'Если акции работают — выйди, чтобы не добавлять заказов'}]);
+      } else if(tomorrowPct >= 70){
+        renderCmd('s-watch','🟡 ЗАВТРА — ОСТАЛОСЬ НЕМНОГО',
+          `Завтрашний лимит: ${fmt(tomorrowLimit)} млн. Зарезервировано: ${fmt(tomorrowReserved)} млн (${Math.round(tomorrowPct)}%). Свободно: ${fmt(tomorrowFree)} млн.`,
+          [{cls:'n-watch',txt:'Можно добрать немного — войди осторожно'},
+           {cls:'n-apple',txt:'Только <span class="apple-tag">Apple 0%</span> как ступень 1'},
+           {cls:'n-watch',txt:`Порог: не превысить ${fmt(tomorrowLimit)} млн суммарно завтра`}]);
+      } else {
+        renderCmd('s-go','✅ ЗАВТРА — ЕСТЬ ЗАПАС, МОЖНО ДОБИРАТЬ',
+          `Завтрашний лимит: ${fmt(tomorrowLimit)} млн. Зарезервировано: ${fmt(tomorrowReserved)} млн (${Math.round(tomorrowPct)}%). Свободно: ${fmt(tomorrowFree)} млн.`,
+          [{cls:'n-go',  txt:'Можно оставить акции работать — заказы пойдут в завтрашний лимит'},
+           {cls:'n-go',  txt:'Начинай со ступени 1: <span class="apple-tag">Apple 0%</span>'},
+           {cls:'n-watch',txt:`Следи: суммарно завтра не превысить ${fmt(tomorrowLimit)} млн`}]);
+      }
+    } else {
+      renderCmd('s-go','✅ ПОСЛЕ 15:00 — ЗАКАЗЫ НА ЗАВТРА',
+        `Завтрашний лимит: ${fmt(tomorrowLimit)} млн. Зарезервированных заказов пока нет.`,
+        [{cls:'n-go',  txt:'Можно оставить акции или войти — всё пойдёт в завтра'},
+         {cls:'n-go',  txt:'Ступень 1: <span class="apple-tag">Apple 0%</span>'},
+         {cls:'n-gray',txt:`Завтрашний лимит: ${fmt(tomorrowLimit)} млн`}]);
+    }
     }
   }
 
@@ -878,10 +920,30 @@ function calcMargin(alive,marginNow,boostNow,rate30,usedPct){
       </div>
     </div>
 
-    <!-- 4. Буст -->
+    <!-- 4. Заказов на завтра -->
     <div class="instr-card">
       <div class="instr-card-head" onclick="toggleInstrBlock(this)">
         <div class="instr-num">4</div>
+        <div class="instr-fname">Заказов на завтра, млн ₽ выручки</div>
+        <span class="instr-arrow">▼</span>
+      </div>
+      <div class="instr-card-body">
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Это поле заполняется <strong>только после 15:00</strong> — до этого оставляй <code>0</code></div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">После 15:00 зайди в кабинет и найди заказы, которые упали после 15:00 — они будут закупаться <strong>завтра</strong></div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Сложи сумму <strong>выручки</strong> по этим заказам и введи её в поле в млн ₽</div></div>
+        <div class="instr-formula">
+          <div class="instr-flabel">Что делает система</div>
+          <div class="instr-fval">Зарезервировано из завтра = Сумма выручки × 0,7</div>
+          <div class="instr-fex">Пример: заказов после 15:00 на 500 000 ₽ → вводишь <code>0.5</code> → система резервирует 350 000 ₽ из завтрашнего лимита и показывает сколько ещё можно добрать</div>
+        </div>
+        <div class="instr-note">Если заказов после 15:00 ещё нет или их не было — оставляй <code>0</code></div>
+      </div>
+    </div>
+
+    <!-- 5. Буст -->
+    <div class="instr-card">
+      <div class="instr-card-head" onclick="toggleInstrBlock(this)">
+        <div class="instr-num">5</div>
         <div class="instr-fname">Буст сейчас, % · Мин на бусте</div>
         <span class="instr-arrow">▼</span>
       </div>
@@ -893,10 +955,10 @@ function calcMargin(alive,marginNow,boostNow,rate30,usedPct){
       </div>
     </div>
 
-    <!-- 5. Остальные поля -->
+    <!-- 6. Остальные поля -->
     <div class="instr-card">
       <div class="instr-card-head" onclick="toggleInstrBlock(this)">
-        <div class="instr-num">5</div>
+        <div class="instr-num">6</div>
         <div class="instr-fname">Остальные поля — из памяти</div>
         <span class="instr-arrow">▼</span>
       </div>
