@@ -48,8 +48,8 @@ body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;
   margin-bottom:10px;
 }
 .brand{font-family:'Martian Mono',monospace;font-size:9px;font-weight:600;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
-.settings-btn{background:var(--s2);color:var(--muted);border:1px solid var(--border);border-radius:6px;font-family:'Martian Mono',monospace;font-size:9px;font-weight:600;letter-spacing:1px;padding:5px 10px;cursor:pointer;transition:all .2s;white-space:nowrap;}
-.settings-btn:hover{color:var(--text);border-color:rgba(255,255,255,.2);}
+.settings-btn{background:transparent;color:var(--text);border:1.5px solid rgba(255,255,255,.55);border-radius:6px;font-family:'Martian Mono',monospace;font-size:9px;font-weight:600;letter-spacing:1px;padding:5px 10px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.settings-btn:hover{border-color:#fff;color:#fff;}
 
 
 /* Inputs scroll area */
@@ -66,20 +66,21 @@ body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;
 .left-inputs::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
 
 .sec-label{font-family:'Martian Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:2px;}
-.ig{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;transition:border-color .2s;}
-.ig:focus-within{border-color:rgba(255,255,255,.18);}
+.ig{background:var(--s2);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:9px 12px;transition:border-color .2s;}
+.ig:focus-within{border-color:rgba(255,255,255,.6);}
 .ig label{display:block;font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
 .ig input,.ig select{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-family:'Martian Mono',monospace;font-size:15px;font-weight:800;}
 .ig input::placeholder{color:var(--s3);}
 .ig .hint{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.3;}
-.divider-line{height:1px;background:var(--border);flex-shrink:0;}
+.divider-line{height:1px;background:rgba(255,255,255,.12);flex-shrink:0;}
 
 .calc-btn{
-  background:var(--text);color:#060810;border:none;border-radius:8px;
+  background:#fff;color:#060810;border:2px solid #fff;border-radius:8px;
   font-family:'Martian Mono',monospace;font-size:10px;font-weight:800;
   letter-spacing:2px;text-transform:uppercase;padding:13px;
   cursor:pointer;transition:opacity .15s,transform .1s;
   flex-shrink:0;margin:0 16px 16px;
+  box-shadow:0 0 16px rgba(255,255,255,.15);
 }
 .calc-btn:hover{opacity:.88;}
 .calc-btn:active{transform:scale(.98);}
@@ -105,7 +106,7 @@ body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;
 }
 .clock{font-family:'Martian Mono',monospace;font-size:20px;font-weight:800;letter-spacing:3px;line-height:1;}
 .clock-date{font-family:'Martian Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;}
-.period-badge-wrap{display:flex;align-items:center;gap:8px;}
+.period-badge-wrap{display:flex;align-items:center;gap:8px;background:var(--s2);border:1.5px solid rgba(255,255,255,.22);border-radius:8px;padding:6px 12px;}
 .pbadge{font-family:'Martian Mono',monospace;font-size:10px;font-weight:800;padding:4px 12px;border-radius:99px;}
 .pbadge-1{background:#001a3d;color:var(--apple);border:1px solid #003d8f;}
 .pbadge-2{background:#1a0d00;color:var(--part);border:1px solid #3d2000;}
@@ -118,7 +119,7 @@ body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;
 .right-content::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
 
 /* METRICS */
-.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-radius:10px;overflow:hidden;flex-shrink:0;}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.25);border-radius:10px;overflow:hidden;flex-shrink:0;}
 .met{background:var(--s1);padding:12px 14px 14px;text-align:center;}
 .met-val{font-family:'Martian Mono',monospace;font-size:17px;font-weight:800;color:var(--text);line-height:1;margin-bottom:3px;}
 .met-lbl{font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
@@ -127,7 +128,7 @@ body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;
 .bar-fill{height:100%;border-radius:99px;transition:width .5s ease,background .5s;}
 
 /* TIMELINE */
-.tl-wrap{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:12px 16px 8px;}
+.tl-wrap{background:var(--s1);border:1.5px solid rgba(255,255,255,.22);border-radius:10px;padding:12px 16px 8px;}
 .tl-track{display:flex;gap:3px;margin-bottom:5px;position:relative;}
 .tl-seg{flex:1;height:7px;border-radius:4px;background:var(--s3);position:relative;}
 .tl-open   {background:linear-gradient(90deg,#005a2e,#003d1c);}
@@ -141,7 +142,7 @@ body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;
 .cmd-section-label{font-family:'Martian Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
 .cmd-box{border-radius:10px;padding:16px 18px;transition:background .35s,border-color .35s;position:relative;overflow:hidden;}
 .cmd-box::after{content:'';position:absolute;top:-40%;left:-20%;width:60%;height:200%;background:rgba(255,255,255,.025);transform:rotate(15deg);pointer-events:none;}
-.s-idle  {background:var(--s2);border:2px dashed var(--border);}
+.s-idle  {background:var(--s2);border:2px dashed rgba(255,255,255,.2);}
 .s-go    {background:var(--go-bg);border:2px solid var(--go-bd);}
 .s-watch {background:var(--watch-bg);border:2px solid var(--watch-bd);}
 .s-part  {background:var(--part-bg);border:2px solid var(--part-bd);}
@@ -175,7 +176,7 @@ body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;
 .scmd-box::after{content:'';position:absolute;top:-40%;left:-20%;width:60%;height:200%;background:rgba(255,255,255,.02);transform:rotate(15deg);pointer-events:none;}
 .s-boost  {background:var(--boost-bg);border:1px solid var(--boost-bd);}
 .s-margin {background:var(--margin-bg);border:1px solid var(--margin-bd);}
-.s-neutral{background:var(--s2);border:1px solid var(--border);}
+.s-neutral{background:var(--s2);border:1.5px solid rgba(255,255,255,.18);}
 .scmd-hl{font-family:'Martian Mono',monospace;font-size:11px;font-weight:800;margin-bottom:4px;}
 .s-boost  .scmd-hl{color:var(--boost);}
 .s-margin .scmd-hl{color:var(--margin);}
@@ -183,6 +184,46 @@ body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;
 .scmd-why{font-size:11px;color:var(--dim);line-height:1.5;}
 .scmd-steps{display:flex;flex-direction:column;gap:5px;margin-top:8px;}
 .scmd-step{display:flex;align-items:flex-start;gap:7px;font-size:11px;color:#c0c8e0;line-height:1.4;}
+
+
+/* INSTRUCTION OVERLAY */
+.instr-btn{background:transparent;color:var(--text);border:1.5px solid rgba(255,255,255,.55);border-radius:6px;font-family:'Martian Mono',monospace;font-size:9px;font-weight:600;letter-spacing:1px;padding:5px 10px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.instr-btn:hover{border-color:#fff;color:#fff;}
+.instr-overlay{position:fixed;inset:0;background:var(--bg);z-index:200;display:none;flex-direction:column;}
+.instr-overlay.open{display:flex;}
+.instr-topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--s1);border-bottom:1.5px solid rgba(255,255,255,.25);flex-shrink:0;}
+.instr-title{font-family:'Martian Mono',monospace;font-size:13px;font-weight:800;color:var(--text);}
+.instr-close{background:transparent;color:var(--text);border:1.5px solid rgba(255,255,255,.55);border-radius:6px;font-family:'Martian Mono',monospace;font-size:9px;font-weight:600;letter-spacing:1px;padding:6px 12px;cursor:pointer;transition:all .2s;}
+.instr-close:hover{border-color:#fff;color:#fff;}
+.instr-content{flex:1;overflow-y:auto;padding:28px 32px;max-width:760px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:24px;background:var(--bg);}
+.instr-content::-webkit-scrollbar{width:3px;}
+.instr-content::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+.instr-card{background:var(--s2);border:1.5px solid rgba(255,255,255,.35);border-radius:12px;}
+.instr-card-head{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--s3);border-bottom:1px solid rgba(255,255,255,.15);}
+.instr-num{min-width:26px;height:26px;border-radius:50%;background:var(--apple);color:#000;font-family:'Martian Mono',monospace;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.instr-fname{font-family:'Martian Mono',monospace;font-size:12px;font-weight:800;color:var(--text);}
+.instr-card-body{padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+.instr-step{display:flex;align-items:flex-start;gap:10px;}
+.instr-dot{min-width:5px;height:5px;border-radius:50%;background:var(--apple);margin-top:8px;flex-shrink:0;}
+.instr-stxt{font-size:13px;color:#c0c8e0;line-height:1.65;}
+.instr-stxt strong{color:var(--text);}
+.instr-stxt code{font-family:'Martian Mono',monospace;font-size:11px;background:var(--s3);border:1px solid var(--border);padding:2px 6px;border-radius:4px;color:var(--watch);}
+.instr-formula{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-top:2px;}
+.instr-flabel{font-family:'Martian Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.instr-fval{font-family:'Martian Mono',monospace;font-size:13px;font-weight:800;color:var(--go);line-height:1.5;}
+.instr-fex{font-size:11px;color:var(--dim);margin-top:5px;line-height:1.5;}
+.instr-note{background:var(--s3);border-left:3px solid var(--watch);border-radius:0 6px 6px 0;padding:10px 14px;font-size:12px;color:var(--dim);line-height:1.55;}
+.inote strong{color:var(--watch);}
+.instr-sec-label{font-family:'Martian Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+
+
+/* COLLAPSIBLE INSTRUCTION BLOCKS */
+.instr-card-head{cursor:pointer;user-select:none;}
+.instr-card-head:hover{background:var(--s3);opacity:.85;}
+.instr-arrow{margin-left:auto;font-size:10px;color:var(--muted);transition:transform .25s ease;flex-shrink:0;}
+.instr-arrow.open{transform:rotate(180deg);}
+.instr-card-body{display:none;}
+.instr-card-body.open{display:flex;}
 
 /* SETTINGS MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;}
@@ -222,7 +263,10 @@ body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;
   <div class="left-top">
     <div class="left-top-row">
       <div class="brand">Пульт акций</div>
-      <button class="settings-btn" onclick="openSettings()">⚙ Лимиты</button>
+      <div style="display:flex;gap:6px;">
+        <button class="instr-btn" onclick="openInstr()">? Инструкция</button>
+        <button class="settings-btn" onclick="openSettings()">⚙ Лимиты</button>
+      </div>
     </div>
 
 
@@ -417,6 +461,19 @@ const MONTHS=['января','февраля','марта','апреля','ма�
 function pad(n){return String(n).padStart(2,'0');}
 
 let CFG={p1limit:9,p1days:5,p2limit:4,p2days:5};
+
+
+
+function toggleInstrBlock(head){
+  const arrow = head.querySelector('.instr-arrow');
+  const body  = head.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+
+function openInstr(){ document.getElementById('instr-overlay').classList.add('open'); }
+function closeInstr(){ document.getElementById('instr-overlay').classList.remove('open'); }
 
 function openSettings(){
   document.getElementById('cfg-p1-limit').value=CFG.p1limit;
@@ -758,5 +815,135 @@ function calcMargin(alive,marginNow,boostNow,rate30,usedPct){
   }
 }
 </script>
+
+<!-- INSTRUCTION OVERLAY -->
+<div class="instr-overlay" id="instr-overlay">
+  <div class="instr-topbar">
+    <div class="instr-title">📖 Инструкция по заполнению пульта</div>
+    <button class="instr-close" onclick="closeInstr()">✕ Закрыть</button>
+  </div>
+  <div class="instr-content">
+
+    <div class="instr-sec-label">Как заполнять поля</div>
+
+    <!-- 1. Маржа -->
+    <div class="instr-card">
+      <div class="instr-card-head" onclick="toggleInstrBlock(this)">
+        <div class="instr-num">1</div>
+        <div class="instr-fname">Маржа сейчас, %</div>
+        <span class="instr-arrow">▼</span>
+      </div>
+      <div class="instr-card-body">
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Открой таблицу <strong>404</strong>, лист <strong>N0 SGNL</strong></div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Найди значение <strong>Поправочный коэффициент</strong></div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Проверь в какой зоне находимся — если зона <strong>«Низкий спрос / хватает денег»</strong>, прибавляй <strong>+4</strong> к результату формулы</div></div>
+        <div class="instr-formula">
+          <div class="instr-flabel">Формула</div>
+          <div class="instr-fval">Маржа = (Поправочный коэффициент ÷ 2) + 4</div>
+          <div class="instr-fex">Пример: коэффициент 2, зона «Низкий спрос» → (2 ÷ 2) + 4 = <strong>5%</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Потрачено за цикл -->
+    <div class="instr-card">
+      <div class="instr-card-head" onclick="toggleInstrBlock(this)">
+        <div class="instr-num">2</div>
+        <div class="instr-fname">Потрачено за цикл, млн ₽</div>
+        <span class="instr-arrow">▼</span>
+      </div>
+      <div class="instr-card-body">
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Зайди на платформу <strong>rmgroup</strong></div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Посмотри текущую сумму задолженности — это и есть значение поля</div></div>
+        <div class="instr-note"><strong>Важно:</strong> вводи в миллионах. Например, 5 900 000 ₽ → вводи <code>5.9</code></div>
+      </div>
+    </div>
+
+    <!-- 3. Потрачено сегодня -->
+    <div class="instr-card">
+      <div class="instr-card-head" onclick="toggleInstrBlock(this)">
+        <div class="instr-num">3</div>
+        <div class="instr-fname">Потрачено сегодня, млн ₽</div>
+        <span class="instr-arrow">▼</span>
+      </div>
+      <div class="instr-card-body">
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Открой лист <strong>«Рентабельность TEST»</strong></div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Найди столбец <strong>«Цена продажи»</strong> — возьми итоговую сумму внизу столбца</div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Умножь на <strong>0,65</strong> — это и есть закупочная стоимость за сегодня</div></div>
+        <div class="instr-formula">
+          <div class="instr-flabel">Формула</div>
+          <div class="instr-fval">Потрачено сегодня = Сумма «Цена продажи» × 0,65</div>
+          <div class="instr-fex">Пример: сумма продаж 1 200 000 ₽ → 1 200 000 × 0,65 = 780 000 ₽ → вводи <code>0.78</code></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Буст -->
+    <div class="instr-card">
+      <div class="instr-card-head" onclick="toggleInstrBlock(this)">
+        <div class="instr-num">4</div>
+        <div class="instr-fname">Буст сейчас, % · Мин на бусте</div>
+        <span class="instr-arrow">▼</span>
+      </div>
+      <div class="instr-card-body">
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Зайди в кабинет → вкладка <strong>Продвижение → Буст продаж</strong></div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Найди включённые кампании и посмотри какой процент там установлен — это значение поля <strong>«Буст сейчас»</strong></div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">В поле <strong>«Мин на бусте»</strong> укажи сколько минут прошло с момента последнего изменения буста</div></div>
+        <div class="instr-note">Если буст выключен — ставь <code>0</code> в оба поля</div>
+      </div>
+    </div>
+
+    <!-- 5. Остальные поля -->
+    <div class="instr-card">
+      <div class="instr-card-head" onclick="toggleInstrBlock(this)">
+        <div class="instr-num">5</div>
+        <div class="instr-fname">Остальные поля — из памяти</div>
+        <span class="instr-arrow">▼</span>
+      </div>
+      <div class="instr-card-body">
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt"><strong>Дата погашения долга</strong> — дата когда нужно отдать деньги поставщику. Система сама посчитает какой день цикла сегодня.</div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt"><strong>Заказов за 30 мин</strong> — сколько заказов упало за последние полчаса. Следишь сам в процессе работы.</div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt"><strong>Текущая ступень</strong> — какую ступень входа ты последний раз устанавливал (0, 1, 2 или 3).</div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt"><strong>Минут на ступени / Заказов на ступени</strong> — сколько времени прошло и сколько заказов упало с момента последнего изменения ступени.</div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt"><strong>Кабинет живёт?</strong> — выбери «Да» если заказы идут, «Нет» если продаж нет вообще.</div></div>
+      </div>
+    </div>
+
+    <div class="instr-sec-label" style="margin-top:4px;">Логика работы с пультом</div>
+
+    <!-- Как часто -->
+    <div class="instr-card">
+      <div class="instr-card-head" onclick="toggleInstrBlock(this)">
+        <div class="instr-num" style="background:var(--watch);">!</div>
+        <div class="instr-fname">Как часто обновлять данные</div>
+        <span class="instr-arrow">▼</span>
+      </div>
+      <div class="instr-card-body">
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt"><strong>Утром в начале дня</strong> — заполни все поля, нажми «Рассчитать», получи стартовую команду</div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt"><strong>Каждые 15–30 минут</strong> — обновляй поля «Потрачено сегодня» и «Заказов за 30 мин», нажимай «Рассчитать»</div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt"><strong>При смене ступени</strong> — сразу обновляй «Текущая ступень», сбрасывай «Минут на ступени» и «Заказов на ступени» в 0</div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt"><strong>При включении / изменении буста</strong> — обновляй «Буст сейчас» и сбрасывай «Мин на бусте» в 0</div></div>
+      </div>
+    </div>
+
+    <!-- Ступени -->
+    <div class="instr-card">
+      <div class="instr-card-head" onclick="toggleInstrBlock(this)">
+        <div class="instr-num" style="background:var(--go);">→</div>
+        <div class="instr-fname">Ступени входа — напоминание</div>
+        <span class="instr-arrow">▼</span>
+      </div>
+      <div class="instr-card-body">
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt"><strong>Ступень 0</strong> — не в акции</div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt"><strong>Ступень 1</strong> — только Apple 0%</div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt"><strong>Ступень 2</strong> — Apple 0% + все остальные товары 0%</div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt"><strong>Ступень 3</strong> — Apple 1% + все остальные 0% (максимальный режим)</div></div>
+        <div class="instr-note"><strong>Правило перехода:</strong> меньше 5 заказов за 2 часа → переходи на следующую ступень. 5 и больше → держись на текущей.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 </body>
 </html>
