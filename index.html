@@ -285,9 +285,9 @@ body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;
       <div class="hint">Когда отдаём деньги поставщику</div>
     </div>
     <div class="ig">
-      <label>Потрачено сегодня, млн ₽</label>
+      <label>Выручка сегодня, млн ₽</label>
       <input type="number" id="i-spent-today" value="0" step="0.05" min="0">
-      <div class="hint">Закупка по заказам до 15:00</div>
+      <div class="hint">Введи выручку — система сама × 0,65</div>
     </div>
     <div class="ig">
       <label>Заказов на завтра, млн ₽ выручки</label>
@@ -551,7 +551,8 @@ function getPeriodBudget(daysLeft){
 
 function calculate(){
   const spentCycle =parseFloat(document.getElementById('i-spent-cycle').value)||0;
-  const spentToday        = parseFloat(document.getElementById('i-spent-today').value)        || 0;
+  const spentTodayRevenue = parseFloat(document.getElementById('i-spent-today').value)        || 0;
+  const spentToday        = spentTodayRevenue * 0.65; // закупка = выручка × 0.65
   const tomorrowRevenue   = parseFloat(document.getElementById('i-tomorrow-orders').value)  || 0;
   const tomorrowReserved  = tomorrowRevenue * 0.7; // уже зарезервировано из завтрашнего лимита
 
@@ -911,11 +912,11 @@ function calcMargin(alive,marginNow,boostNow,rate30,usedPct){
       <div class="instr-card-body">
         <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Открой лист <strong>«Рентабельность TEST»</strong></div></div>
         <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Найди столбец <strong>«Цена продажи»</strong> — возьми итоговую сумму внизу столбца</div></div>
-        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Умножь на <strong>0,65</strong> — это и есть закупочная стоимость за сегодня</div></div>
+        <div class="instr-step"><div class="instr-dot"></div><div class="instr-stxt">Введи эту сумму в поле — система сама умножит на 0,65 и получит закупочную стоимость</div></div>
         <div class="instr-formula">
-          <div class="instr-flabel">Формула</div>
-          <div class="instr-fval">Потрачено сегодня = Сумма «Цена продажи» × 0,65</div>
-          <div class="instr-fex">Пример: сумма продаж 1 200 000 ₽ → 1 200 000 × 0,65 = 780 000 ₽ → вводи <code>0.78</code></div>
+          <div class="instr-flabel">Что вводить</div>
+          <div class="instr-fval">Выручка сегодня = Сумма «Цена продажи» (как есть)</div>
+          <div class="instr-fex">Пример: сумма продаж 1 200 000 ₽ → вводи <code>1.2</code> → система считает 1,2 × 0,65 = 0,78 млн закупки</div>
         </div>
       </div>
     </div>
